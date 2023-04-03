@@ -115,9 +115,11 @@ void removeAll(List *&L)
         NODE *p_temp = p_current;
         p_current = p_current->p_next;
         delete p_temp;
+        p_temp = nullptr;
     }
     L->p_head = L->p_tail = nullptr;
     delete p_current;
+    p_current = nullptr;
 }
 
 void printList(List *L)
@@ -285,8 +287,94 @@ void removePos(List *&L, int pos)
     }
 }
 
+List *concatList(List *L1, List *L2)
+{
+    NODE *l1_node = L1->p_head;
+    NODE *l2_node = L2->p_head;
+    List *new_list = new List();
+
+    while ((l1_node != nullptr) && (l2_node != nullptr))
+    {
+        if (l1_node->key < l2_node->key)
+        {
+            addTail(new_list, l1_node->key);
+            l1_node = l1_node->p_next;
+        }
+        else
+        {
+            addTail(new_list, l2_node->key);
+            l2_node = l2_node->p_next;
+        }
+    }
+    while (l1_node != nullptr)
+    {
+        addTail(new_list, l1_node->key);
+        l1_node = l1_node->p_next;
+    }
+    while (l2_node != nullptr)
+    {
+        addTail(new_list, l2_node->key);
+        l2_node = l2_node->p_next;
+    }
+    return new_list;
+}
+
+void mergeList(List *&L1, List *L2)
+{
+    if (L2->p_head == nullptr)
+    {
+        // If L2 is empty, nothing to merge
+        return;
+    }
+    if (L1->p_head == nullptr)
+    {
+        // If L1 is empty, just copy all elements from L2 to L1
+        L1->p_head = L2->p_head;
+        L1->p_tail = L2->p_tail;
+        L2->p_head = L2->p_tail = nullptr;
+        return;
+    }
+
+    NODE *l1_node = L1->p_head;
+    NODE *l1_next = L1->p_head->p_next;
+    NODE *l2_node = L2->p_head;
+
+    // Head L1 is greater than head L2
+    if (l1_node->key > l2_node->key)
+    {
+        addHead(L1, l2_node->key);
+        l2_node = l2_node->p_next;
+        l1_node = L1->p_head;
+        l1_next = l1_node->p_next;
+    }
+
+    int index = 0;
+    while ((l1_next != nullptr) && (l2_node != nullptr))
+    {
+        if (l2_node->key < l1_next->key)
+        {
+            addPos(L1, l2_node->key, ++index);
+            l2_node = l2_node->p_next; 
+            l1_node = l1_node->p_next;
+        }
+        else
+        {
+            ++index;
+            l1_node = l1_next;
+            l1_next = l1_node->p_next;
+        }
+    }
+    if (l2_node != nullptr) {
+        l1_node->p_next = l2_node;
+        L1->p_tail = L2->p_tail;
+    }
+    // Reset L2 to an empty list
+    L2->p_head = L2->p_tail = nullptr;
+}
+
 int main()
 {
+    /*
     List *list = new List();
     // addHead(list, 3);
     // addHead(list, 2);
@@ -308,4 +396,36 @@ int main()
     // List *newList = new List();
     // newList = reverseList(list);
     // printList(newList);
+    */
+
+    List *list1 = new List();
+    List *list2 = new List();
+
+    addTail(list1, 4);
+    addTail(list1, 6);
+    addTail(list1, 8);
+
+    addTail(list2, 1);
+    addTail(list2, 2);
+    addTail(list2, 3);
+    addTail(list2, 5);
+    addTail(list2, 9);
+    addTail(list2, 10);
+
+    // addTail(list1, 2);
+    // addTail(list1, 4);
+
+    // addTail(list2, 1);
+    // addTail(list2, 3);
+
+    // List *list3 = new List();
+    // list3 = concatList(list1, list2);
+    // printList(list3);
+
+    // List *list4 = new List();
+    // mergeList(list4, list3);
+    // printList(list4);
+
+    mergeList(list1, list2);
+    printList(list1);
 }
