@@ -50,7 +50,7 @@ void LRN(NODE *pRoot)
     cout << pRoot->key << " ";
 }
 
-// Duyệt thứ tự
+// Duyệt theo mức
 void LevelOrder(NODE *pRoot)
 {
     if (pRoot == nullptr)
@@ -61,6 +61,7 @@ void LevelOrder(NODE *pRoot)
     {
         NODE *pNode = q.front();
         q.pop();
+        cout << pNode->key << " ";
         if (pNode->p_left != nullptr)
             q.push(pNode->p_left);
         if (pNode->p_right != nullptr)
@@ -216,13 +217,6 @@ int Level(NODE *pRoot, NODE *p)
 // Đếm số lá của một cây nhị phân
 int countLeaf(NODE *pRoot)
 {
-    // if (pRoot->p_left==nullptr)
-    //     return countLeaf(pRoot->p_right);
-    // else if (pRoot->p_right==nullptr)
-    //     return countLeaf(pRoot->p_left);
-    // else if(pRoot->p_left==nullptr&&pRoot->p_right==nullptr)
-    //     return 1;
-
     if (pRoot == nullptr)
         return 0;
     if (pRoot->p_left == nullptr && pRoot->p_right == nullptr)
@@ -233,35 +227,59 @@ int countLeaf(NODE *pRoot)
 // Đếm số NODE của một cây nhị phân tìm kiếm mà giá trị key nhỏ hơn giá trị cho trước
 int countLess(NODE *pRoot, int x)
 {
-    if(pRoot == nullptr)
+    if (pRoot == nullptr)
         return 0;
-    if (x==pRoot->key)
-        return countNode(pRoot->p_left);
-    else if (x<pRoot->key)
+    if (x <= pRoot->key)
         return countLess(pRoot->p_left, x);
-    else
-        return countLess(pRoot->p_right, x);
+    return countLess(pRoot->p_left, x) + countLess(pRoot->p_right, x) + 1;
 }
 
 // Đếm số lượng NODE của một cây nhị phân tìm kiếm cho trước mà giá trị key lớn hơn giá trị cho trước
 int countGreater(NODE *pRoot, int x)
 {
+    if (pRoot == nullptr)
+        return 0;
+    if (x >= pRoot->key)
+        return countGreater(pRoot->p_right, x);
+    return countLess(pRoot->p_left, x) + countLess(pRoot->p_right, x) + 1;
 }
 
 // Xác định cây nhị phân có phải là cây nhị phân tìm kiếm hay không
 bool isBST(NODE *pRoot)
 {
+    if (pRoot == nullptr)
+    {
+        return true;
+    }
+    if (pRoot->p_left != nullptr && pRoot->p_left->key > pRoot->key)
+    {
+        return false;
+    }
+    if (pRoot->p_right != nullptr && pRoot->p_right->key < pRoot->key)
+    {
+        return false;
+    }
+    return isBST(pRoot->p_left) && isBST(pRoot->p_right);
 }
 
 // Xác định cây nhị phân có phải là cây nhị phân tìm kiếm đầy đủ hay không
 bool isFullBST(NODE *pRoot)
 {
+    if (pRoot == nullptr)
+        return true;
+    if (pRoot->p_left == nullptr && pRoot->p_right == nullptr)
+        return true;
+    if (pRoot->p_left != nullptr && pRoot->p_right != nullptr)
+        return isFullBST(pRoot->p_left) && isFullBST(pRoot->p_right);
+    return false;
 }
 
 int main()
 {
-    int a[6] = {1, 2, 4, 3, 0, 5};
-    NODE *BinaryTree = createTree(a, 6);
+    // int a[5] = {2, 1, 4, 3, 5};
+    // NODE *BinaryTree = createTree(a, 5);
+    int a[7] = {5, 2, 1, 3, 4, 6};
+    NODE *BinaryTree = createTree(a, 7);
     NLR(BinaryTree);
     cout << endl;
     LNR(BinaryTree);
@@ -269,5 +287,7 @@ int main()
     LRN(BinaryTree);
     cout << endl;
     cout << countLeaf(BinaryTree) << endl;
-    cout<<countNode(BinaryTree)<<endl;
+    cout << countNode(BinaryTree) << endl;
+    cout << isBST(BinaryTree) << endl;
+    cout << isFullBST(BinaryTree) << endl;
 }
