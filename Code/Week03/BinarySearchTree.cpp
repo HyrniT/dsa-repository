@@ -278,8 +278,8 @@ int main()
 {
     // int a[5] = {2, 1, 4, 3, 5};
     // NODE *BinaryTree = createTree(a, 5);
-    int a[7] = {5, 2, 1, 3, 4, 6};
-    NODE *BinaryTree = createTree(a, 7);
+    int a[6] = {5, 2, 1, 3, 4, 6};
+    NODE *BinaryTree = createTree(a, 6);
     NLR(BinaryTree);
     cout << endl;
     LNR(BinaryTree);
