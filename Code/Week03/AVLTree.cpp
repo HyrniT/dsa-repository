@@ -143,6 +143,7 @@ void Balance(NODE *&pRoot)
     // Cân bằng lại các cây con
     Balance(pRoot->p_left);
     Balance(pRoot->p_right);
+    cout<<"Finish balance!"<<endl;
 }
 
 // Thêm một NODE có giá trị cho trước vào cây AVL cho trước
@@ -159,7 +160,50 @@ void Insert(NODE *&pRoot, int x)
     Balance(pRoot);
 }
 
+void NLR(NODE *pRoot)
+{
+    if (pRoot == nullptr)
+        return;
+    cout << pRoot->key << " ";
+    NLR(pRoot->p_left);
+    NLR(pRoot->p_right);
+}
+
+// Duyệt trung thứ tự
+void LNR(NODE *pRoot)
+{
+    if (pRoot == nullptr)
+        return;
+    LNR(pRoot->p_left);
+    cout << pRoot->key << " ";
+    LNR(pRoot->p_right);
+}
+
+// Duyệt hậu thứ tự
+void LRN(NODE *pRoot)
+{
+    if (pRoot == nullptr)
+        return;
+    LRN(pRoot->p_left);
+    LRN(pRoot->p_right);
+    cout << pRoot->key << " ";
+}
+
 int main()
 {
-    cout << "Hello world!" << endl;
+    NODE* treeAVL = nullptr;
+    Insert(treeAVL, 3);
+    Insert(treeAVL, 2);
+    Insert(treeAVL, 1);
+    // Insert(treeAVL, 0);
+
+    NLR(treeAVL);cout<<endl;
+    LNR(treeAVL);cout<<endl;
+    LRN(treeAVL);cout<<endl;
+
+    Balance(treeAVL);
+
+    NLR(treeAVL);cout<<endl;
+    LNR(treeAVL);cout<<endl;
+    LRN(treeAVL);cout<<endl;
 }

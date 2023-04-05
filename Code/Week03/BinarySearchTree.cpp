@@ -35,9 +35,9 @@ void LNR(NODE *pRoot)
 {
     if (pRoot == nullptr)
         return;
-    NLR(pRoot->p_left);
+    LNR(pRoot->p_left);
     cout << pRoot->key << " ";
-    NLR(pRoot->p_right);
+    LNR(pRoot->p_right);
 }
 
 // Duyệt hậu thứ tự
@@ -45,8 +45,8 @@ void LRN(NODE *pRoot)
 {
     if (pRoot == nullptr)
         return;
-    NLR(pRoot->p_left);
-    NLR(pRoot->p_right);
+    LRN(pRoot->p_left);
+    LRN(pRoot->p_right);
     cout << pRoot->key << " ";
 }
 
