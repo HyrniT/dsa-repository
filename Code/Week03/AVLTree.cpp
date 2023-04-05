@@ -62,6 +62,8 @@ void rotateLeft(NODE *&pRoot)
     updateHeight(nRoot);
 
     pRoot = nRoot;
+    // delete nRoot;
+    // nRoot = nullptr;
 }
 
 // Xoay phải (khi cây lệch trái)
@@ -80,6 +82,8 @@ void rotateRight(NODE *&pRoot)
     updateHeight(nRoot);
 
     pRoot = nRoot;
+    // delete nRoot;
+    // nRoot = nullptr;
 }
 
 // Xoay trái phải
@@ -95,11 +99,11 @@ void rotateLeftRight(NODE *&pRoot)
 }
 
 // Xoay phải trái
-//   1                   1*                      2
-//    \    (xoay phải)    \      (xoay trái)    / \
-//     3*     ---->        2        ---->      1   3
-//    /                     \
-//   2                       3
+//   1                  1*                   2
+//    \    (xoay phải)   \    (xoay trái)   / \
+//     3*     ---->       2      ---->     1   3
+//    /                    \
+//   2                      3
 void rotateRightLeft(NODE *&pRoot)
 {
     rotateRight(pRoot->p_right);
@@ -147,76 +151,96 @@ void Balance(NODE *&pRoot)
 }
 
 // Thêm một NODE có giá trị cho trước vào cây AVL cho trước
-// void Insert(NODE *&pRoot, int x)
-// {
-//     if (pRoot == nullptr)
-//         pRoot = createNode(x);
-//     if (x < pRoot->key)
-//         Insert(pRoot->p_left, x);
-//     else if (x > pRoot->key)
-//         Insert(pRoot->p_right, x);
-//     else
-//         return;
-//     Balance(pRoot);
-// }
-
-void UpdateHeight(NODE* node) {
-    node->height = max(getHeight(node->p_left), getHeight(node->p_right)) + 1;
-}
-
-NODE* LeftRotate(NODE* node) {
-    NODE* newRoot = node->p_right;
-    node->p_right = newRoot->p_left;
-    newRoot->p_left = node;
-
-    UpdateHeight(node);
-    UpdateHeight(newRoot);
-
-    return newRoot;
-}
-
-NODE* RightRotate(NODE* node) {
-    NODE* newRoot = node->p_left;
-    node->p_left = newRoot->p_right;
-    newRoot->p_right = node;
-
-    UpdateHeight(node);
-    UpdateHeight(newRoot);
-
-    return newRoot;
-}
-
-void Insert(NODE* &pRoot, int x) {
-    if (pRoot == nullptr) {
+void Insert(NODE *&pRoot, int x)
+{
+    if (pRoot == nullptr)
         pRoot = createNode(x);
-        return;
-    }
-    if (x < pRoot->key) {
+    if (x < pRoot->key)
         Insert(pRoot->p_left, x);
-    }
-    else {
+    else if (x > pRoot->key)
         Insert(pRoot->p_right, x);
-    }
-
-    UpdateHeight(pRoot);
-
-    int balanceFactor = getBalanceFactor(pRoot);
-    if (balanceFactor > 1 && x < pRoot->p_left->key) {
-        pRoot = RightRotate(pRoot);
-    }
-    else if (balanceFactor < -1 && x > pRoot->p_right->key) {
-        pRoot = LeftRotate(pRoot);
-    }
-    else if (balanceFactor > 1 && x > pRoot->p_left->key) {
-        pRoot->p_left = LeftRotate(pRoot->p_left);
-        pRoot = RightRotate(pRoot);
-    }
-    else if (balanceFactor < -1 && x < pRoot->p_right->key) {
-        pRoot->p_right = RightRotate(pRoot->p_right);
-        pRoot = LeftRotate(pRoot);
-    }
+    else // x == pRoot->key
+        return;
+    // Cập nhật chiều cao node mởi thêm vào
+    updateHeight(pRoot);
+    // Cân bằng cây
+    Balance(pRoot);
+    // int balanceFactor = getBalanceFactor(pRoot);
+    // if (balanceFactor > 1)
+    // {
+    //     if (x < pRoot->p_left->key)
+    //     {
+    //         rotateRight(pRoot);
+    //     }
+    //     else if (x > pRoot->p_left->key)
+    //     {
+    //         rotateLeftRight(pRoot);
+    //     }
+    // }
+    // if (balanceFactor < -1)
+    // {
+    //     if (x > pRoot->p_right->key)
+    //     {
+    //         rotateLeft(pRoot);
+    //     }
+    //     else if (x < pRoot->p_right->key)
+    //     {
+    //         rotateRightLeft(pRoot);
+    //     }
+    // }
 }
 
+// Xóa một NODE với giá trị cho trước từ một cây AVL cho trước
+void Remove(NODE *&pRoot, int x)
+{
+    if (pRoot == nullptr)
+        return;
+    if (x < pRoot->key)
+        Remove(pRoot->p_left, x);
+    else if (x > pRoot->key)
+        Remove(pRoot->p_right, x);
+    else // x == pRoot->key
+    {
+        // Node không có cây con
+        if (pRoot->p_left == nullptr && pRoot->p_right == nullptr)
+        {
+            delete pRoot;
+            pRoot = nullptr;
+        }
+        // Node chỉ có cây con bên phải
+        else if (pRoot->p_left == nullptr)
+        {
+            NODE *temp = pRoot;
+            pRoot = pRoot->p_right;
+            delete temp;
+            temp = nullptr;
+        }
+        // Node chỉ có cây con bên trái
+        else if (pRoot->p_right == nullptr)
+        {
+            NODE *temp = pRoot;
+            pRoot = pRoot->p_left;
+            delete temp;
+            temp = nullptr;
+        }
+        // Node có cả cây con bên trái và cây con bên phải
+        else
+        {
+            // Tìm node trái nhất của cây con bên phải (hoặc node phải nhất của cây con trái)
+            NODE *temp = pRoot->p_right;
+            while (temp != nullptr)
+            {
+                temp = temp->p_left;
+            }
+            // Copy giá trị của node trái nhất sang node cần xoá
+            pRoot->key = temp->key;
+            // Xoá node trái nhất của cây con phải
+            Remove(pRoot->p_right, temp->key);
+        }
+    }
+    // Cân bằng cây
+    Balance(pRoot);
+}
 
 // Duyệt tiền thứ tự
 void NLR(NODE *pRoot)
@@ -267,19 +291,31 @@ void LevelOrder(NODE *pRoot)
     }
 }
 
+// Xác định một cây nhị phân có phải là cây AVL không
+bool isAVL(NODE *pRoot)
+{
+    if (pRoot == nullptr)
+        return true;
+    if (getBalanceFactor(pRoot) < -1 || getBalanceFactor(pRoot) > 1)
+        return false;
+    // isAVL(pRoot->p_left);
+    // isAVL(pRoot->p_right);
+    // return true;
+    return isAVL(pRoot->p_left) && isAVL(pRoot->p_right);
+}
+
 int main()
 {
-    NODE* treeAVL = nullptr;
+    NODE *treeAVL = nullptr;
     Insert(treeAVL, 3);
     Insert(treeAVL, 2);
     Insert(treeAVL, 1);
     Insert(treeAVL, 0);
-
-    LevelOrder(treeAVL);cout<<endl;
+    Remove(treeAVL, 4);
+    LevelOrder(treeAVL);
+    // cout << endl;
     // rotateRight(treeAVL);
-    // LevelOrder(treeAVL);cout<<endl;
-
-    // NLR(treeAVL);cout<<endl;
-    // LNR(treeAVL);cout<<endl;
-    // LRN(treeAVL);cout<<endl;
+    // rotateLeftRight(treeAVL);
+    cout << endl;
+    cout << isAVL(treeAVL) << endl;
 }
