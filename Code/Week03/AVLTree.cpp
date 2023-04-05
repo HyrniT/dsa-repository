@@ -1,4 +1,5 @@
 #include <iostream>
+#include <queue>
 
 using namespace std;
 
@@ -38,7 +39,7 @@ int getBalanceFactor(NODE *pRoot)
 }
 
 // Cập nhập lại chiều cao của một NODE
-void updateHeigth(NODE *&pRoot)
+void updateHeight(NODE *&pRoot)
 {
     if (pRoot == nullptr)
         return;
@@ -57,8 +58,8 @@ void rotateLeft(NODE *&pRoot)
     pRoot->p_right = nRoot->p_left;
     nRoot->p_left = pRoot;
 
-    updateHeigth(pRoot);
-    updateHeigth(nRoot);
+    updateHeight(pRoot);
+    updateHeight(nRoot);
 
     pRoot = nRoot;
 }
@@ -75,8 +76,8 @@ void rotateRight(NODE *&pRoot)
     pRoot->p_left = nRoot->p_right;
     nRoot->p_right = pRoot;
 
-    updateHeigth(pRoot);
-    updateHeigth(nRoot);
+    updateHeight(pRoot);
+    updateHeight(nRoot);
 
     pRoot = nRoot;
 }
@@ -143,23 +144,81 @@ void Balance(NODE *&pRoot)
     // Cân bằng lại các cây con
     Balance(pRoot->p_left);
     Balance(pRoot->p_right);
-    cout<<"Finish balance!"<<endl;
 }
 
 // Thêm một NODE có giá trị cho trước vào cây AVL cho trước
-void Insert(NODE *&pRoot, int x)
-{
-    if (pRoot == nullptr)
-        pRoot = createNode(x);
-    if (x < pRoot->key)
-        Insert(pRoot->p_left, x);
-    else if (x > pRoot->key)
-        Insert(pRoot->p_right, x);
-    else
-        return;
-    Balance(pRoot);
+// void Insert(NODE *&pRoot, int x)
+// {
+//     if (pRoot == nullptr)
+//         pRoot = createNode(x);
+//     if (x < pRoot->key)
+//         Insert(pRoot->p_left, x);
+//     else if (x > pRoot->key)
+//         Insert(pRoot->p_right, x);
+//     else
+//         return;
+//     Balance(pRoot);
+// }
+
+void UpdateHeight(NODE* node) {
+    node->height = max(getHeight(node->p_left), getHeight(node->p_right)) + 1;
 }
 
+NODE* LeftRotate(NODE* node) {
+    NODE* newRoot = node->p_right;
+    node->p_right = newRoot->p_left;
+    newRoot->p_left = node;
+
+    UpdateHeight(node);
+    UpdateHeight(newRoot);
+
+    return newRoot;
+}
+
+NODE* RightRotate(NODE* node) {
+    NODE* newRoot = node->p_left;
+    node->p_left = newRoot->p_right;
+    newRoot->p_right = node;
+
+    UpdateHeight(node);
+    UpdateHeight(newRoot);
+
+    return newRoot;
+}
+
+void Insert(NODE* &pRoot, int x) {
+    if (pRoot == nullptr) {
+        pRoot = createNode(x);
+        return;
+    }
+    if (x < pRoot->key) {
+        Insert(pRoot->p_left, x);
+    }
+    else {
+        Insert(pRoot->p_right, x);
+    }
+
+    UpdateHeight(pRoot);
+
+    int balanceFactor = getBalanceFactor(pRoot);
+    if (balanceFactor > 1 && x < pRoot->p_left->key) {
+        pRoot = RightRotate(pRoot);
+    }
+    else if (balanceFactor < -1 && x > pRoot->p_right->key) {
+        pRoot = LeftRotate(pRoot);
+    }
+    else if (balanceFactor > 1 && x > pRoot->p_left->key) {
+        pRoot->p_left = LeftRotate(pRoot->p_left);
+        pRoot = RightRotate(pRoot);
+    }
+    else if (balanceFactor < -1 && x < pRoot->p_right->key) {
+        pRoot->p_right = RightRotate(pRoot->p_right);
+        pRoot = LeftRotate(pRoot);
+    }
+}
+
+
+// Duyệt tiền thứ tự
 void NLR(NODE *pRoot)
 {
     if (pRoot == nullptr)
@@ -189,21 +248,38 @@ void LRN(NODE *pRoot)
     cout << pRoot->key << " ";
 }
 
+// Duyệt theo mức
+void LevelOrder(NODE *pRoot)
+{
+    if (pRoot == nullptr)
+        return;
+    queue<NODE *> q;
+    q.push(pRoot);
+    while (!q.empty())
+    {
+        NODE *pNode = q.front();
+        q.pop();
+        cout << pNode->key << " ";
+        if (pNode->p_left != nullptr)
+            q.push(pNode->p_left);
+        if (pNode->p_right != nullptr)
+            q.push(pNode->p_right);
+    }
+}
+
 int main()
 {
     NODE* treeAVL = nullptr;
     Insert(treeAVL, 3);
     Insert(treeAVL, 2);
     Insert(treeAVL, 1);
-    // Insert(treeAVL, 0);
+    Insert(treeAVL, 0);
 
-    NLR(treeAVL);cout<<endl;
-    LNR(treeAVL);cout<<endl;
-    LRN(treeAVL);cout<<endl;
+    LevelOrder(treeAVL);cout<<endl;
+    // rotateRight(treeAVL);
+    // LevelOrder(treeAVL);cout<<endl;
 
-    Balance(treeAVL);
-
-    NLR(treeAVL);cout<<endl;
-    LNR(treeAVL);cout<<endl;
-    LRN(treeAVL);cout<<endl;
+    // NLR(treeAVL);cout<<endl;
+    // LNR(treeAVL);cout<<endl;
+    // LRN(treeAVL);cout<<endl;
 }
