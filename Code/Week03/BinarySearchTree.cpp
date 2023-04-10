@@ -107,6 +107,46 @@ NODE *findMin(NODE *node)
 }
 
 // Xoá một NODE với giá trị cho trước từ một cây nhị phân tìm kiếm
+// void Remove(NODE *&pRoot, int x)
+// {
+//     if (pRoot == nullptr)
+//         return;
+//     if (x < pRoot->key)
+//         Remove(pRoot->p_left, x);
+//     else if (x > pRoot->key)
+//         Remove(pRoot->p_right, x);
+//     else // x == pRoot->key
+//     {
+//         if (pRoot->p_left == nullptr && pRoot->p_right == nullptr)
+//         {
+//             delete pRoot;
+//             pRoot = nullptr;
+//         }
+//         else if (pRoot->p_left == nullptr)
+//         {
+//             NODE *temp = pRoot;
+//             pRoot = pRoot->p_right;
+//             delete temp;
+//             temp = nullptr;
+//         }
+//         else if (pRoot->p_right == nullptr)
+//         {
+//             NODE *temp = pRoot;
+//             pRoot = pRoot->p_left;
+//             delete temp;
+//             temp = nullptr;
+//         }
+//         else
+//         {
+//             NODE *temp = findMin(pRoot->p_right);
+//             pRoot->key = temp->key;
+//             // Remove(pRoot->p_right, temp->key);
+//             delete temp;
+//             temp = nullptr;
+//         }
+//     }
+// }
+
 void Remove(NODE *&pRoot, int x)
 {
     if (pRoot == nullptr)
@@ -115,32 +155,31 @@ void Remove(NODE *&pRoot, int x)
         Remove(pRoot->p_left, x);
     else if (x > pRoot->key)
         Remove(pRoot->p_right, x);
-    else
+    else // x == pRoot->key
     {
+        // Trường hợp 1: Nút cần xóa không có con
         if (pRoot->p_left == nullptr && pRoot->p_right == nullptr)
         {
             delete pRoot;
             pRoot = nullptr;
         }
-        else if (pRoot->p_left == nullptr)
-        {
-            NODE *temp = pRoot;
-            pRoot = pRoot->p_right;
-            delete temp;
-            temp = nullptr;
-        }
-        else if (pRoot->p_right == nullptr)
-        {
-            NODE *temp = pRoot;
-            pRoot = pRoot->p_left;
-            delete temp;
-            temp = nullptr;
-        }
         else
         {
-            NODE *temp = findMin(pRoot->p_right);
-            pRoot->key = temp->key;
-            Remove(pRoot->p_right, temp->key);
+            NODE *temp = pRoot;
+            // Trường hợp 2: Nút cần xóa có một con
+            if (pRoot->p_left == nullptr)
+                pRoot = pRoot->p_right;
+            else if (pRoot->p_right == nullptr)
+                pRoot = pRoot->p_left;
+            // Trường hợp 3: Nút cần xóa có hai con
+            else
+            {
+                temp = findMin(pRoot->p_right);
+                pRoot->key = temp->key;
+                // Remove(pRoot->p_right, temp->key);
+            }
+            delete temp;
+            temp = nullptr;
         }
     }
 }
@@ -263,6 +302,11 @@ bool isBST(NODE *pRoot)
 }
 
 // Xác định cây nhị phân có phải là cây nhị phân tìm kiếm đầy đủ hay không
+
+// Một cây nhị phân đầy đủ là một cây nhị phân mà tất cả các nút đều có đúng 
+// hai nút con hoặc không có nút con nào. Ngoài ra, mỗi nút trong cây đều được 
+// đầy đủ bao gồm nút trái và phải. Nếu cây có chiều cao là h, thì số nút tối 
+// đa của cây là 2^(h+1) - 1.
 bool isFullBST(NODE *pRoot)
 {
     if (pRoot == nullptr)
@@ -278,15 +322,21 @@ int main()
 {
     // int a[5] = {2, 1, 4, 3, 5};
     // NODE *BinaryTree = createTree(a, 5);
-    int a[6] = {5, 2, 1, 3, 4, 6};
-    NODE *BST = createTree(a, 6);
-    cout << BST << endl;
-    cout << &BST << endl;
+
+    int a[7] = {5, 1, 0, 3, 2, 4, 6};
+    NODE *BST = createTree(a, 7);
+    NLR(BST);
+    cout << endl;
     LNR(BST);
     cout << endl;
-    Remove(BST, 6);
+    LRN(BST);
+    cout << endl;
+    cout << countLeaf(BST) << endl;
+    cout << countNode(BST) << endl;
+    cout << isBST(BST) << endl;
+    cout << isFullBST(BST) << endl;
+    Remove(BST, 2);
     LNR(BST);
     cout << endl;
-    cout << BST << endl;
-    cout << &BST << endl;
+    cout << isFullBST(BST) << endl;
 }
