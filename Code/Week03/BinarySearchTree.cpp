@@ -279,15 +279,14 @@ int main()
     // int a[5] = {2, 1, 4, 3, 5};
     // NODE *BinaryTree = createTree(a, 5);
     int a[6] = {5, 2, 1, 3, 4, 6};
-    NODE *BinaryTree = createTree(a, 6);
-    NLR(BinaryTree);
+    NODE *BST = createTree(a, 6);
+    cout << BST << endl;
+    cout << &BST << endl;
+    LNR(BST);
     cout << endl;
-    LNR(BinaryTree);
+    Remove(BST, 6);
+    LNR(BST);
     cout << endl;
-    LRN(BinaryTree);
-    cout << endl;
-    cout << countLeaf(BinaryTree) << endl;
-    cout << countNode(BinaryTree) << endl;
-    cout << isBST(BinaryTree) << endl;
-    cout << isFullBST(BinaryTree) << endl;
+    cout << BST << endl;
+    cout << &BST << endl;
 }
