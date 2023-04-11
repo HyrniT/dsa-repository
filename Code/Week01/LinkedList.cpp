@@ -163,6 +163,7 @@ List *reverseList(List *L)
             temp_node = temp_node->p_next;
         }
         delete temp_node;
+        temp_node = nullptr;
     }
     return new_list;
 }
@@ -400,6 +401,7 @@ int main()
 
     List *list1 = new List();
     List *list2 = new List();
+    List *list3 = new List();
 
     addTail(list1, 4);
     addTail(list1, 6);
@@ -428,4 +430,7 @@ int main()
 
     mergeList(list1, list2);
     printList(list1);
+
+    list3 = reverseList(list1);
+    printList(list3);
 }
