@@ -23,6 +23,7 @@ Node *createNode(Person person)
     newNode->key.id = person.id;
     newNode->key.name = person.name;
     newNode->key.year = person.year;
+    newNode->next = nullptr;
     return newNode;
 }
 
@@ -41,15 +42,28 @@ private:
     Node *tail;
 
 public:
+    LinkedList()
+    {
+        head = nullptr;
+        tail = nullptr;
+    }
+
+    Node *getTail()
+    {
+        return tail;
+    }
+
+    Node *getHead()
+    {
+        return head;
+    }
     // appendNode ~ Append_Node_2_Linked_List
     void appendNode(string student_id, string name, int birth_year)
     {
         Person person = {student_id, name, birth_year};
-        Node *newNode = new Node();
-        newNode->key = person;
-        newNode->next = nullptr;
+        Node *newNode = createNode(person);
 
-        if (tail == nullptr)
+        if (head == nullptr && tail == nullptr)
         {
             head = newNode;
             tail = newNode;
@@ -61,55 +75,134 @@ public:
         }
     }
 
-    // Print the value of the linked list
     void printList()
     {
         Node *currNode = head;
-
         while (currNode != nullptr)
         {
-            cout << "ID: " << currNode->key.id << endl;
-            cout << "Name: " << currNode->key.name << endl;
-            cout << "Year of birth: " << currNode->key.year << endl;
-            cout << endl;
+            printNode(currNode);
             currNode = currNode->next;
         }
     }
 
     // Bai 3
     // insertNode ~ Insert_Node_2_Linked_List
-    // void insertNode(string student_id, string name, int birth_year, int index)
-    // {
-    //     if (index < 0)
-    //         return;
+    void insertNode(string student_id, string name, int birth_year, int index)
+    {
+        if (index < 0)
+            return;
 
-    //     Person person = {student_id, name, birth_year};
-    //     Node *newNode = createNode(person);
+        Person person = {student_id, name, birth_year};
+        Node *newNode = createNode(person);
 
-    //     if (index == 0)
-    //     {
-    //         newNode->next = head;
-    //         head = newNode;
-    //     }
-    //     else
-    //     {
-    //         int iNode = 0;
-    //         Node* currNode = head;
-    //         while (currNode != nullptr)
-    //         {
-    //             iNode++;
-    //             if(iNode == index)
-    //             {
-    //                 currNode->next = newNode;
-    //                 newNode->next = currNode->next;
-    //             }
-    //             if(newNode->next == nullptr)
-    //                 tail = newNode;
-    //             currNode = currNode->next;
-    //         }
-    //     }
-    // }
+        if (index == 0)
+        {
+            newNode->next = head;
+            head = newNode;
+            return;
+        }
+        else
+        {
+            int i = 0;
+            Node *currNode = head;
+            while (currNode != nullptr)
+            {
+                i++;
+                if (i == index)
+                {
+                    newNode->next = currNode->next;
+                    currNode->next = newNode;
+                    break;
+                }
+                else
+                    currNode = currNode->next;
+            }
+        }
+        if (newNode->next == nullptr)
+            tail = newNode;
+    }
+
+    // Bai 4
+    // deleteNode ~ Delete_Node_By_Id
+    void deleteNode(string deleted_student_id)
+    {
+        if (head == nullptr)
+            return;
+
+        Node *currNode = head;
+
+        // Xoá node đầu danh sách
+        if (head->key.id == deleted_student_id)
+        {
+            head = head->next;
+            delete currNode;
+            currNode = nullptr;
+            return;
+        }
+
+        Node *prevNode = nullptr;
+
+        // Xoá node giữa danh sách
+        while (currNode->next != nullptr)
+        {
+            if (currNode->key.id == deleted_student_id)
+            {
+                prevNode->next = currNode->next;
+                delete currNode;
+                currNode = nullptr;
+                return;
+            }
+            else
+            {
+                prevNode = currNode;    
+                currNode = currNode->next;
+            }
+        }
+        // Xoá node cuối danh sách
+        if (tail->key.id == deleted_student_id)
+        {
+            prevNode->next = nullptr;
+            tail = prevNode;
+            delete currNode;
+            currNode = nullptr;
+        }
+    }
+
+    // Bai 5
+    // updateNode ~ Modify_Name_By_Id
+    void updateNode(string student_id, string new_name)
+    {
+        if (head == nullptr)
+            return;
+
+        Node *currNode = head;
+
+        while (currNode != nullptr)
+        {
+            if(currNode->key.id == student_id)
+            {
+                currNode->key.name = new_name;
+                break;
+            }
+            else
+            {
+                currNode = currNode->next;
+            }
+        }
+    }
 };
+
+// Bai 6
+struct NODE
+{
+    int key;
+    NODE *left;
+    NODE *right;
+    int heigth;
+};
+
+
+
 
 int main()
 {
@@ -119,16 +212,24 @@ int main()
     // printNode(node1);
 
     // Bai 2
-    LinkedList list;
-    list.appendNode("123", "Nguyen Van A", 2004);
-    cout << "Linked list value: " << endl;
-    list.printList();
+    // LinkedList list;
+    // list.appendNode("123", "Nguyen Van A", 2004);
+    // cout << "Linked list value: " << endl;
+    // list.printList();
 
     // Bai 3
     // LinkedList list1;
     // list1.appendNode("123", "Nguyen Van A", 2004);
     // list1.appendNode("125", "Vo Van C", 2004);
-    // // list1.insertNode("124", "Tran Thi B", 2004, 1);
+    // list1.insertNode("124", "Tran Thi B", 2004, 1);
+    // list1.printList();
+
+    // Bai 4
+    // list1.deleteNode("125");
+    // list1.printList();
+
+    // Bai 5
+    // list1.updateNode("123", "Truong Thi Z");
     // list1.printList();
 
     return 0;

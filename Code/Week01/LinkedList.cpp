@@ -246,6 +246,8 @@ bool addPos(List *&L, int data, int pos)
                 temp_node = temp_node->p_next;
             }
         }
+        if (new_node->p_next == nullptr)
+            L->p_tail = new_node;
         if (count < pos)
             addTail(L, data);
         temp_node = nullptr;
@@ -355,7 +357,7 @@ void mergeList(List *&L1, List *L2)
         if (l2_node->key < l1_next->key)
         {
             addPos(L1, l2_node->key, ++index);
-            l2_node = l2_node->p_next; 
+            l2_node = l2_node->p_next;
             l1_node = l1_node->p_next;
         }
         else
@@ -365,7 +367,8 @@ void mergeList(List *&L1, List *L2)
             l1_next = l1_node->p_next;
         }
     }
-    if (l2_node != nullptr) {
+    if (l2_node != nullptr)
+    {
         l1_node->p_next = l2_node;
         L1->p_tail = L2->p_tail;
     }
@@ -402,6 +405,7 @@ int main()
     List *list1 = new List();
     List *list2 = new List();
     List *list3 = new List();
+    List *list4 = new List();
 
     addTail(list1, 4);
     addTail(list1, 6);
@@ -420,11 +424,9 @@ int main()
     // addTail(list2, 1);
     // addTail(list2, 3);
 
-    // List *list3 = new List();
     // list3 = concatList(list1, list2);
     // printList(list3);
 
-    // List *list4 = new List();
     // mergeList(list4, list3);
     // printList(list4);
 
