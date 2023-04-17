@@ -8,65 +8,132 @@ struct NODE
     NODE *pNext;
 };
 
+// Stack
 struct Stack
+{
+    NODE *pTop;
+};
+
+void initStack(Stack &S, int val)
+{
+    NODE *p = new NODE;
+    p->key = val;
+    p->pNext = nullptr;
+    S.pTop = p;
+}
+
+void push(Stack &S, int val)
+{
+    NODE *p = new NODE;
+    p->key = val;
+    p->pNext = S.pTop;
+    S.pTop = p;
+}
+
+int pop(Stack &S)
+{
+    if (S.pTop == nullptr)
+    {
+        cout << "Stack is empty!" << endl;
+        return -1;
+    }
+    NODE *p = S.pTop;
+    int val = p->key;
+    S.pTop = p->pNext;
+    delete p;
+    return val;
+}
+
+int countStack(Stack &S)
+{
+    int count = 0;
+    NODE *p = S.pTop;
+    while (p != nullptr)
+    {
+        count++;
+        p = p->pNext;
+    }
+    return count;
+}
+
+bool isEmptyStack(Stack &S)
+{
+    return (S.pTop == nullptr);
+}
+
+// Queue
+struct NODE
+{
+    int key;
+    NODE *pNext;
+};
+
+struct Queue
 {
     NODE *pHead;
     NODE *pTail;
 };
 
-NODE *createNode(int data)
+// Khởi tạo hàng đợi với một giá trị cho trước
+void initQueue(Queue &Q, int val)
 {
-    NODE *new_node = new NODE();
-    new_node->key = data;
-    new_node->pNext = nullptr;
-    return new_node;
+    NODE *p = new NODE;
+    p->key = val;
+    p->pNext = nullptr;
+    Q.pHead = Q.pTail = p;
 }
 
-Stack *createStack(int data)
+// Kiểm tra hàng đợi có rỗng hay không
+bool isEmpty(Queue Q)
 {
-    NODE* new_node = createNode(data);
-    Stack *new_stack = new Stack();
-    new_stack->pHead = new_node;
-    new_stack->pTail = new_node;
-    return new_stack;
+    return Q.pHead == nullptr;
 }
 
-bool push(Stack *&S, int data)
+// Enqueue một giá trị vào hàng đợi
+void enqueue(Queue &Q, int val)
 {
-    NODE *new_node = createNode(data);
-    if (new_node == nullptr)
-        return false;
-    if ((S->pHead == nullptr) && (S->pTail == nullptr))
+    NODE *p = new NODE;
+    p->key = val;
+    p->pNext = nullptr;
+    if (Q.pHead == nullptr)
     {
-        S->pHead = S->pTail = new_node;
+        Q.pHead = Q.pTail = p;
     }
     else
     {
-        new_node->pNext = S->pHead;
-        S->pHead = new_node;
+        Q.pTail->pNext = p;
+        Q.pTail = p;
     }
-    return true;
 }
 
-int pop (Stack *&S)
+// Dequeue một phần tử ra khỏi hàng đợi, trả về giá trị của phần tử đó
+int dequeue(Queue &Q)
 {
-    int result = -1;
-    if (S->pHead == S->pTail)
+    if (Q.pHead == nullptr)
     {
-        result = S->pHead->key;
-        S->pHead = S->pTail =nullptr;
-        delete S->pHead;
-        delete S->pTail;
+        cout << "Queue is empty!" << endl;
+        return -1;
     }
-    else
+    NODE *p = Q.pHead;
+    int val = p->key;
+    Q.pHead = p->pNext;
+    if (Q.pHead == nullptr)
     {
-        result = S->pHead->key;
-        NODE *temp_node = S->pHead->pNext;
-        delete S->pHead;
-        S->pHead = temp_node;
-        temp_node = nullptr;
-        delete temp_node;
+        Q.pTail = nullptr;
     }
-    return result;
+    delete p;
+    return val;
 }
 
+// Đếm số lượng phần tử có trong hàng đợi
+int countElements(Queue Q)
+{
+    int count = 0;
+    NODE *p = Q.pHead;
+    while (p != nullptr)
+    {
+        count++;
+        p = p->pNext;
+    }
+    return count;
+}
