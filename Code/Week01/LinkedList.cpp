@@ -33,12 +33,15 @@ List *createList(NODE *p_node)
 
 bool addHead(List *&L, int data)
 {
-    NODE *new_node = createNode(data);
+    NODE* new_node = createNode(data);
     if (new_node == nullptr)
         return false;
-    if ((L->p_head == nullptr) && (L->p_tail == nullptr))
+    if (L == nullptr)
+        L = createList(new_node);
+    else if (L->p_head == nullptr)
     {
-        L->p_head = L->p_tail = new_node;
+        L->p_head = new_node;
+        L->p_tail = new_node;
     }
     else
     {
@@ -50,12 +53,15 @@ bool addHead(List *&L, int data)
 
 bool addTail(List *&L, int data)
 {
-    NODE *new_node = createNode(data);
+    NODE* new_node = createNode(data);
     if (new_node == nullptr)
         return false;
-    if ((L->p_head == nullptr) && (L->p_tail == nullptr))
+    if (L == nullptr)
+        L = createList(new_node);
+    else if (L->p_head == nullptr)
     {
-        L->p_head = L->p_tail = new_node;
+        L->p_head = new_node;
+        L->p_tail = new_node;
     }
     else
     {
@@ -67,59 +73,52 @@ bool addTail(List *&L, int data)
 
 void removeHead(List *&L)
 {
-    if ((L->p_head == nullptr) || (L->p_tail == nullptr))
+    if(L == nullptr)
         return;
-    else if (L->p_head == L->p_tail)
+    
+    if(L->p_head == L->p_tail)
     {
-        L->p_head = L->p_tail = nullptr;
-        delete L->p_head;
-        delete L->p_tail;
+        L->p_head = nullptr;
+        L->p_tail = nullptr;
     }
     else
     {
-        NODE *temp_node = L->p_head->p_next;
-        delete L->p_head;
-        L->p_head = temp_node;
-        temp_node = nullptr;
+        NODE* temp_node = L->p_head;
+        L->p_head = L->p_head->p_next;
         delete temp_node;
+        temp_node = nullptr;
     }
 }
 
-void removeTail(List *&L)
+void removeTail(List* &L)
 {
-    if ((L->p_head == nullptr) || (L->p_tail == nullptr))
+    if(L == nullptr)
         return;
-    else if (L->p_head == L->p_tail)
+    
+    if(L->p_head == L->p_tail)
     {
-        // delete L->p_head;
-        // delete L->p_tail;
-        L->p_head = L->p_tail = nullptr;
+        L->p_head = nullptr;
+        L->p_tail = nullptr;
     }
     else
     {
-        NODE *temp_node = L->p_head;
-        while (temp_node->p_next->p_next != nullptr)
+        NODE* temp_node = L->p_head;
+        while (temp_node->p_next != L->p_tail)
             temp_node = temp_node->p_next;
-        temp_node->p_next = nullptr;
+        delete L->p_tail;
         L->p_tail = temp_node;
-        temp_node = nullptr;
-        delete temp_node;
+        L->p_tail->p_next = nullptr;
     }
 }
 
 void removeAll(List *&L)
 {
-    NODE *p_current = L->p_head;
-    while (p_current != nullptr)
-    {
-        NODE *p_temp = p_current;
-        p_current = p_current->p_next;
-        delete p_temp;
-        p_temp = nullptr;
-    }
-    L->p_head = L->p_tail = nullptr;
-    delete p_current;
-    p_current = nullptr;
+    if(L == nullptr)
+        return;
+    while(L->p_head != nullptr)
+        removeHead(L);
+    delete L;
+    L = nullptr;
 }
 
 void printList(List *L)
@@ -149,75 +148,67 @@ int countElements(List *L)
 
 List *reverseList(List *L)
 {
-    List *new_list;
-    if ((L->p_head == nullptr) || (L->p_tail == nullptr))
+    if (L == nullptr)
         return nullptr;
-    else
+    NODE* temp_node = L->p_head;
+    List* new_list = nullptr;
+    while(temp_node != nullptr)
     {
-        NODE *temp_node = L->p_head->p_next;
-        NODE *new_node = createNode(L->p_head->key);
-        new_list = createList(new_node);
-        while (temp_node != nullptr)
-        {
-            addHead(new_list, temp_node->key);
-            temp_node = temp_node->p_next;
-        }
-        delete temp_node;
-        temp_node = nullptr;
+        addHead(new_list, temp_node->key);
+        temp_node = temp_node->p_next;
     }
+    delete temp_node;
     return new_list;
 }
 
 void removeDuplicate(List *&L)
 {
-    unordered_set<int> hash_table;
-    NODE *previous_node = nullptr;
-    NODE *current_node = L->p_head;
-    while (current_node != nullptr)
+    if(L == nullptr)
+        return;
+    NODE *curr_node = L->p_head;
+    NODE *prev_node = nullptr;
+    unordered_set<int> visited; 
+    while(curr_node != nullptr)
     {
-        if (hash_table.find(current_node->key) != hash_table.end())
+        if(visited.find(curr_node->key) != visited.end())
         {
-            previous_node->p_next = current_node->p_next;
-            current_node = nullptr;
-            delete current_node;
-            current_node = previous_node->p_next;
+            NODE* temp_node = curr_node;
+            prev_node->p_next = curr_node->p_next;
+            curr_node = curr_node->p_next;
+            delete temp_node;
+            temp_node = nullptr;
         }
         else
         {
-            hash_table.insert(current_node->key);
-            previous_node = current_node;
-            current_node = current_node->p_next;
+            visited.insert(curr_node->key);
+            prev_node = curr_node;
+            curr_node = curr_node->p_next;
         }
     }
-    previous_node = nullptr;
-    delete previous_node;
-    current_node = nullptr;
-    delete current_node;
 }
 
 bool removeElement(List *&L, int key)
 {
-    NODE *previous_node = nullptr;
-    NODE *current_node = L->p_head;
-    while (current_node != nullptr)
+    if (L == nullptr)
+        return false;
+    NODE *curr_node = L->p_head;
+    NODE *prev_node = nullptr;
+    while (curr_node != nullptr)
     {
-        if (current_node->key == key)
+        if (curr_node->key == key)
         {
-            previous_node->p_next = current_node->p_next;
-            current_node = nullptr;
-            delete current_node;
-            current_node = previous_node->p_next;
+            NODE *temp_node = curr_node;
+            prev_node->p_next = curr_node->p_next;
+            curr_node = curr_node->p_next;
+            delete temp_node;
+            temp_node = nullptr;
         }
         else
         {
-            previous_node = current_node;
-            current_node = current_node->p_next;
+            prev_node = curr_node;
+            curr_node = curr_node->p_next;
         }
     }
-    previous_node = nullptr;
-    delete previous_node;
-    current_node = nullptr;
-    delete current_node;
     return true;
 }
 
