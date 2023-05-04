@@ -47,6 +47,14 @@ void BubbleSortRecursive(int arr[], int n)
     }
 }
 
+/**
+ * Bubble Sort Optimize
+ * Average complexity: O(n^2)
+ * Best Case: O(n)
+ * Worst Case: O(n^2)
+ * Space: O(1)
+ * Stable
+ */ 
 void BubbleSortOptimize(int arr[], int n)
 {
     int i, j;
@@ -66,6 +74,24 @@ void BubbleSortOptimize(int arr[], int n)
     }
 }
 
+void BubbleSortOptimizer(int arr[], int n)
+{
+    int i, j, lastSwap;
+    for (i = 0; i < n - 1; i++) {
+        lastSwap = 0;
+        for (j = 0; j < n - i - 1; j++) {
+            if (arr[j] > arr[j + 1]) {
+                swap(arr[j], arr[j + 1]);
+                lastSwap = j + 1;
+            }
+        }
+        if (lastSwap == 0) {
+            break;
+        }
+        i = n - lastSwap - 1;
+    }
+}
+
 void printArray(int arr[], int n)
 {
     int i;
@@ -78,7 +104,7 @@ int main()
 {
     int arr[] = {64, 25, 12, 22, 11};
     int n = sizeof(arr) / sizeof(arr[0]);
-    BubbleSortRecursive(arr, n);
+    BubbleSortOptimizer(arr, n);
     cout << "Sorted array: \n";
     printArray(arr, n);
     return 0;
