@@ -3,86 +3,66 @@
 using namespace std;
 
 /**
- * Insertion Sort
+ * Bubble Sort
  * Average complexity: O(n^2)
  * Best Case: O(n^2)
  * Worst Case: O(n^2)
  * Space: O(1)
- * Stable
  */
-void InsertionSort(int arr[], int n)
+void BubbleSort(int arr[], int n)
 {
-    int i, j, key;
-    for (i = 1; i < n; i++)
+    int i, j;
+    for (i = 0; i < n - 1; i++)
     {
-        key = arr[i];
-        j = i - 1;
-        while (j >= 0 && arr[j] > key)
+        // Last i elements are already in place
+        for (j = 0; j < n - 1 - i; j++)
         {
-            arr[j + 1] = arr[j];
-            j--;
+            if (arr[j] > arr[j + 1])
+                swap(arr[j], arr[j + 1]);
         }
-        arr[j + 1] = key;
     }
 }
 
-void InsertionSortRecursive(int arr[], int n)
+void BubbleSortRecursive(int arr[], int n)
 {
-    // Base case: if the array has only one element, it is already sorted
-    if (n <= 1)
-        return;
+    bool sorted = true;
+    // we are assuming that array is sorted
 
-    // Sort the first n-1 elements of the array recursively
-    InsertionSortRecursive(arr, n - 1);
-
-    // Insert the nth element into its correct position in the sorted subarray
-    int last = arr[n - 1]; // (n - 1) ~ i
-    int j = n - 2;         // (n - 2) ~ (i - 1)
-
-    // Shift elements to the right to make space for the nth element
-    while (j >= 0 && arr[j] > last)
+    for (int i = 0; i < n - 1; i++)
     {
-        arr[j + 1] = arr[j];
-        j--;
-    }
+        if (arr[i] > arr[i + 1])
+        {
+            swap(arr[i], arr[i + 1]);
 
-    // Place the nth element in its correct position
-    arr[j + 1] = last;
+            sorted = false;
+            // now array is not sorted
+        }
+        // if there are no swaps then we can
+        // say that array is sorted.
+    }
+    if (sorted == false)
+    {
+        // recursively calling until it was sorted.
+        BubbleSortRecursive(arr, n);
+    }
 }
 
-int BinarySearch(int arr[], int left, int right, int x)
+void BubbleSortOptimize(int arr[], int n)
 {
-    while (left <= right)
+    int i, j;
+    for (i = 0; i < n - 1; i++)
     {
-        int mid = (left + right) / 2;
-        if (arr[mid] == x)
+        bool sorted = true;
+        for (j = 0; j < n - 1 - i; j++)
         {
-            return mid;
+            if (arr[j] > arr[j + 1])
+            {
+                swap(arr[j], arr[j + 1]);
+                sorted = false;
+            }
         }
-        else if (arr[mid] < x)
-        {
-            left = mid + 1;
-        }
-        else
-        {
-            right = mid - 1;
-        }
-    }
-    return left;
-}
-
-void BinaryInsertionSort(int arr[], int n)
-{
-    int i, l, r, key;
-    for (i = 1; i < n; i++)
-    {
-        key = arr[i];
-        l = BinarySearch(arr, 0, i - 1, key);
-        for (r = i - 1; r >= l; r--)
-        {
-            arr[r + 1] = arr[r];
-        }
-        arr[l] = key;
+        if (sorted)
+            break;
     }
 }
 
@@ -98,12 +78,8 @@ int main()
 {
     int arr[] = {64, 25, 12, 22, 11};
     int n = sizeof(arr) / sizeof(arr[0]);
-    BinaryInsertionSort(arr, n);
+    BubbleSortRecursive(arr, n);
     cout << "Sorted array: \n";
     printArray(arr, n);
-    // cout<<std::lower_bound(arr, arr+5, 14)<<endl;
-    // cout<<arr<<endl;
-    // cout<<std::lower_bound(arr, arr+5, 14)-arr;
-
     return 0;
 }
