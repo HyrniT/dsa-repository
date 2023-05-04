@@ -101,5 +101,9 @@ int main()
     BinaryInsertionSort(arr, n);
     cout << "Sorted array: \n";
     printArray(arr, n);
+    // cout<<std::lower_bound(arr, arr+5, 14)<<endl;
+    // cout<<arr<<endl;
+    // cout<<std::lower_bound(arr, arr+5, 14)-arr;
+
     return 0;
 }
