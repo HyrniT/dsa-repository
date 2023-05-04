@@ -36,8 +36,8 @@ void InsertionSortRecursive(int arr[], int n)
     InsertionSortRecursive(arr, n - 1);
 
     // Insert the nth element into its correct position in the sorted subarray
-    int last = arr[n - 1];          // (n - 1) ~ i
-    int j = n - 2;                  // (n - 2) ~ (i - 1)
+    int last = arr[n - 1]; // (n - 1) ~ i
+    int j = n - 2;         // (n - 2) ~ (i - 1)
 
     // Shift elements to the right to make space for the nth element
     while (j >= 0 && arr[j] > last)
@@ -50,10 +50,46 @@ void InsertionSortRecursive(int arr[], int n)
     arr[j + 1] = last;
 }
 
-void printArray(int arr[], int size)
+int BinarySearch(int arr[], int left, int right, int x)
+{
+    while (left <= right)
+    {
+        int mid = (left + right) / 2;
+        if (arr[mid] == x)
+        {
+            return mid;
+        }
+        else if (arr[mid] < x)
+        {
+            left = mid + 1;
+        }
+        else
+        {
+            right = mid - 1;
+        }
+    }
+    return left;
+}
+
+void BinaryInsertionSort(int arr[], int n)
+{
+    int i, l, r, key;
+    for (i = 1; i < n; i++)
+    {
+        key = arr[i];
+        l = BinarySearch(arr, 0, i - 1, key);
+        for (r = i - 1; r >= l; r--)
+        {
+            arr[r + 1] = arr[r];
+        }
+        arr[l] = key;
+    }
+}
+
+void printArray(int arr[], int n)
 {
     int i;
-    for (i = 0; i < size; i++)
+    for (i = 0; i < n; i++)
         cout << arr[i] << " ";
     cout << endl;
 }
@@ -62,8 +98,12 @@ int main()
 {
     int arr[] = {64, 25, 12, 22, 11};
     int n = sizeof(arr) / sizeof(arr[0]);
-    InsertionSortRecursive(arr, n);
+    BinaryInsertionSort(arr, n);
     cout << "Sorted array: \n";
     printArray(arr, n);
+    // cout<<std::lower_bound(arr, arr+5, 14)<<endl;
+    // cout<<arr<<endl;
+    // cout<<std::lower_bound(arr, arr+5, 14)-arr;
+
     return 0;
 }
