@@ -1,6 +1,8 @@
 #include <iostream>
 #include <vector>
 
+#define BASE 10
+
 using namespace std;
 
 int findMax(vector<int> &arr)
@@ -15,19 +17,25 @@ int findMax(vector<int> &arr)
 void countingSort(vector<int> &arr, int exp)
 {
     int n = arr.size();
-    vector<int> output(n);
-    vector<int> count(10, 0);
+    vector<int> count(BASE, 0), output(n);
 
     for (int i = 0; i < n; i++)
     {
-        int digit = (arr[i] / exp) % 10;
+        int digit = (arr[i] / exp) % BASE;
         count[digit]++;
     }
 
-    for (int i = 1; i < 10; i++)
+    for (int i = 1; i < BASE; i++)
         count[i] += count[i - 1];
 
-    
+    for (int i = n - 1; i >= 0; i--)
+    {
+        int digit = (arr[i] / exp) % BASE;
+        output[count[digit] - 1] = arr[i];
+        count[digit]--;
+    }
+
+    copy(output.begin(), output.end(), arr.begin());
 }
 /**
  * Radix Sort (LSD, Base 10)
@@ -37,6 +45,12 @@ void countingSort(vector<int> &arr, int exp)
  * Space: O(logk)
  * Stable or Not Stable
  */
+void RadixSort(vector<int> &arr)
+{
+    int max = *max_element(arr.begin(), arr.end());
+    for (int exp = 1; max / exp > 0; exp *= BASE)
+        countingSort(arr, exp);
+}
 
 void printArray(vector<int> &arr)
 {
@@ -53,7 +67,7 @@ int main()
     arr.push_back(12);
     arr.push_back(22);
     arr.push_back(11);
-    CountingSort(arr);
+    RadixSort(arr);
     printArray(arr);
     return 0;
 }
