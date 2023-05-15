@@ -6,7 +6,7 @@ using namespace std;
 /**
  * Counting Sort
  * Average complexity: O(n + k)
- * Best Case: O(n + k)
+ * Best Case: O(n + k) where k is the range from min to max
  * Worst Case: O(n + k)
  * Space: O(k)
  * Not Stable (Can make it stable)
