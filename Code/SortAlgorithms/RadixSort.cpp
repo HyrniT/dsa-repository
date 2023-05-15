@@ -5,15 +5,6 @@
 
 using namespace std;
 
-int findMax(vector<int> &arr)
-{
-    int maxVal = arr[0];
-    for (int i = 1; i < arr.size(); i++)
-        if (arr[i] > maxVal)
-            maxVal = arr[i];
-    return maxVal;
-}
-
 void countingSort(vector<int> &arr, int exp)
 {
     int n = arr.size();
@@ -37,6 +28,7 @@ void countingSort(vector<int> &arr, int exp)
 
     copy(output.begin(), output.end(), arr.begin());
 }
+
 /**
  * Radix Sort (LSD, Base 10)
  * Average complexity: O(nlogk)
