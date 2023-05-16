@@ -53,7 +53,15 @@ public:
 
         vector<int> shortestPath;
         int vertex = endVertex;
-        while
+        while (vertex != -1) // while (vertex != startVertex)
+        {
+            shortestPath.push_back(vertex);
+            vertex = previous[vertex];
+        }
+        // shortestPath.push_back(startVertex);
+        reverse(shortestPath.begin(), shortestPath.end());
+
+        return shortestPath;
     }
 };
 
@@ -68,6 +76,12 @@ int main()
     graph.addEdge(2, 5);
     graph.addEdge(3, 4);
     graph.addEdge(3, 5);
+
+    cout << "Shortest path from vertex 0 to 5 (use DFS): ";
+    vector<int> shortestPath = graph.DFS(0, 5);
+
+    for (int vertex : shortestPath)
+        cout << vertex << " ";
 
     return 0;
 }
