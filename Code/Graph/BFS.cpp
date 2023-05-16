@@ -53,11 +53,12 @@ public:
 
         vector<int> shortestPath;
         int vertex = endVertex;
-        while (vertex != -1)
+        while (vertex != -1) // while (vertex != startVertex)
         {
             shortestPath.push_back(vertex);
             vertex = previous[vertex];
         }
+        // shortestPath.push_back(startVertex);
         reverse(shortestPath.begin(), shortestPath.end());
 
         return shortestPath;

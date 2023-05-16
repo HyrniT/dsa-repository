@@ -45,11 +45,15 @@ public:
                 if(!visited[adjVertex])
                 {
                     visited[adjVertex] = true;
-                    previous.push_back(currentVertex);
+                    previous[adjVertex] = currentVertex;
                     stack.push(adjVertex);
                 }
             }
         }
+
+        vector<int> shortestPath;
+        int vertex = endVertex;
+        while
     }
 };
 
