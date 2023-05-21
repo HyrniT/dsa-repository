@@ -1,5 +1,4 @@
 #include <iostream>
-#include <queue>
 
 using namespace std;
 
@@ -40,14 +39,13 @@ Node *splay(Node *root, int key)
     // cout<<root->key<<endl;
     if (root == nullptr || root->key == key)
         return root;
-
     if (key < root->key)
     {
         // Not exist key in tree
         if (root->left == nullptr)
             return root;
 
-        /* First rotate */ 
+        /* First rotate */
         // Zig-Zig
         if (key < root->left->key)
         {
@@ -59,12 +57,12 @@ Node *splay(Node *root, int key)
         {
             root->left->right = splay(root->left->right, key);
             // Exist key in tree
-            if(root->left->right != nullptr)
+            if (root->left->right != nullptr)
                 root->left = rotateLeft(root->left);
         }
 
         /* Second rotate */
-        if(root->left != nullptr)
+        if (root->left != nullptr)
             root = rotateRight(root);
 
         return root;
@@ -74,134 +72,102 @@ Node *splay(Node *root, int key)
         // Not exist key in tree
         if (root->right == nullptr)
             return root;
-        
+
         /* First rotate */
         // Zag-Zag
-        if(key > root->right->key)
+        if (key > root->right->key)
         {
             root->right->right = splay(root->right->right, key);
             root = rotateLeft(root);
         }
         // Zig-Zag
-        else if(key < root->right->key)
+        else if (key < root->right->key)
         {
             root->right->left = splay(root->right->left, key);
-            if(root->right->left != nullptr)
+            if (root->right->left != nullptr)
                 root->right = rotateRight(root->right);
         }
         /* Second rotate */
-        if(root->right != nullptr)
+        if (root->right != nullptr)
             root = rotateLeft(root);
 
         return root;
     }
 }
 
-Node* insert(Node* root, int key)
+Node *insert(Node *root, int key)
 {
-    if(root == nullptr)
+    if (root == nullptr)
         return createNode(key);
-    
-    // if(key < root->key)
-    // {
-    //     // if(root->left == nullptr)
-    //     //     root->left = createNode(key);
-    //     // else
-    //     root->left = insert(root->left, key);
-    //     // root = rotateRight(root);
-    //     // root = splay(root, key);
-    // }
-    // else if(key > root->key)
-    // {
-    //     // if(root->right == nullptr)
-    //     //     root->right = createNode(key);
-    //     // else
-    //     root->right = insert(root->right, key);
-    //     // root = rotateLeft(root);
-    //     // root = splay(root, key);
-    // }
 
-    Node* current = root;
-    Node* parent = nullptr;
-    Node* newNode = createNode(key);
+    if (key < root->key)
+        root->left = insert(root->left, key);
+    else if (key > root->key)
+        root->right = insert(root->right, key);
 
-    while(current != nullptr)
-    {
-        parent = current;
-        if(key < current->key)
-            current = current->left;
-        else if(key > current->key)
-            current = current->right;
-        else // key == current->key
-            return splay(current, key);
-    }
-
-    if (key < parent->key) {
-        parent->left = newNode;
-    } else {
-        parent->right = newNode;
-    }
-
-    // cout<<root->key<<endl;
     return splay(root, key);
 }
 
-void printSplayTree(Node* root, const std::string& prefix = "", bool isLeft = false) {
-    if (root == nullptr) {
-        return;
+Node *remove(Node *root, int key)
+{
+    if (root == nullptr)
+        return root;
+
+    root = splay(root, key);
+
+    if (root->key != key)
+        return root;
+
+    Node *temp = nullptr;
+
+    if (root->left == nullptr)
+    {
+        temp = root;
+        root = root->right;
+    }
+    else
+    {
+        temp = root;
+        root = splay(root->left, key);
+        root->right = temp->right;
     }
 
-    std::cout << prefix;
-    std::cout << (isLeft ? "├──" : "└──");
-    std::cout << "(" << root->key << ")" << std::endl;
+    delete temp;
+    temp = nullptr;
+    return root;
+}
+
+void printSplayTree(Node *root, const string &prefix = "", bool isLeft = false)
+{
+    if (root == nullptr)
+        return;
+
+    cout << prefix;
+    cout << (isLeft ? "├──" : "└──");
+    cout << "(" << root->key << ")" << endl;
 
     printSplayTree(root->left, prefix + (isLeft ? "│   " : "    "), true);
     printSplayTree(root->right, prefix + (isLeft ? "│   " : "    "), false);
 }
 
-Node* insert1(Node* root, int value) {
-    if (root == nullptr) {
-        return createNode(value);
-    }
-
-    if (value < root->key) {
-        root->left = insert1(root->left, value);
-    }
-    else if (value > root->key) {
-        root->right = insert1(root->right, value);
-    }
-
-    return root;
-}
-
-
-
 int main()
 {
-    // Node* root = nullptr;
-    // root = insert(root, 50);
-    // root = insert(root, 30);
-    // // root = insert(root, 70);
-    // // root = insert(root, 20);
-    // // root = insert(root, 40);
-    // // root = insert(root, 60);
-    // // root = insert(root, 80);
+    Node *root = nullptr;
+    root = insert(root, 50);
+    root = insert(root, 30);
+    root = insert(root, 70);
+    root = insert(root, 20);
+    root = insert(root, 40);
+    root = insert(root, 60);
+    root = insert(root, 80);
 
-    // std::cout << "Inorder traversal of the splay tree:\n";
-    // printSplayTree(root);
-    // std::cout << std::endl;
+    cout << "Splay tree:" << endl;
+    printSplayTree(root);
+    cout << endl;
 
-    Node * temp = nullptr;
-    temp = insert(temp, 50);
-    temp = insert(temp, 30);
-    temp = insert(temp, 70);
-    temp = insert(temp, 20);
-    // temp = rotateRight(temp);
-    // temp = insert(temp, 70);
-    // temp = insert(temp, 20);
-    printSplayTree(temp);
-    // temp = rotateLeft(temp);
-    // printSplayTree(temp);
-
+    root = remove(root, 40);
+    cout << "After deleting 40:" << endl;
+    printSplayTree(root);
+    cout << endl;
     return 0;
 }
