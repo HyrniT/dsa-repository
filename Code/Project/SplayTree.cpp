@@ -95,15 +95,62 @@ Node *splay(Node *root, int key)
     }
 }
 
+/* Một số lưu ý trong phương thức THÊM 1 node vào cây Splay
+
+   Có 2 phương pháp và mỗi phương pháp sẽ cho kết quả cây
+   khác nhau, sau đây tôi sẽ phân tích:
+
+   - Phương pháp sử dụng đệ quy: Tiến hành xoay node cha của
+   node cần xoay trước, sau đó mới node ông của node cần xoay
+
+   - Phương pháp không sử dụng đệ quy: Tiến hành xoay node ông
+   của node cần xoay trước, sau đó mới xoay node ông của node
+   cần xoay
+
+   Theo như tôi tìm hiểu thì không có sự thống nhất chính thức
+   về mặt thuật toán trong phương pháp thêm 1 node vào cây.
+   Mục đích chính của cây Splay là đưa node mới vừa được thêm 
+   lên làm node gốc của cây. Vì vậy, cả 2 phương pháp mà tôi 
+   tìm hiểu đều không sai dù cho kết quả cây khác nhau. 
+
+ */
+
 Node *insert(Node *root, int key)
 {
     if (root == nullptr)
         return createNode(key);
 
+    // START: Recursive solution
     if (key < root->key)
         root->left = insert(root->left, key);
     else if (key > root->key)
         root->right = insert(root->right, key);
+    // END: Recursive solution
+
+    // START: Non-recursive solution
+    // Node* newNode = createNode(key);
+    // Node* current = root;
+    // Node* parent = nullptr;
+
+    // while (current != nullptr) {
+    //     parent = current;
+
+    //     if (key < current->key) {
+    //         current = current->left;
+    //     } else if (key > current->key) {
+    //         current = current->right;
+    //     } else {
+    //         current->key = key;
+    //         splay(root, key); 
+    //         return root;
+    //     }
+    // }
+
+    // if (key < parent->key) 
+    //     parent->left = newNode;
+    // else 
+    //     parent->right = newNode;
+    // END: Non-recursive solution
 
     return splay(root, key);
 }
@@ -161,12 +208,12 @@ int main()
     root = insert(root, 60);
     root = insert(root, 80);
 
-    cout << "Splay tree:" << endl;
+    cout << "After insertion:" << endl;
     printSplayTree(root);
     cout << endl;
 
     root = remove(root, 40);
-    cout << "After deleting 40:" << endl;
+    cout << "After deletion (40):" << endl;
     printSplayTree(root);
     cout << endl;
     return 0;
