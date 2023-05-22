@@ -109,9 +109,9 @@ Node *splay(Node *root, int key)
 
    Theo như tôi tìm hiểu thì không có sự thống nhất chính thức
    về mặt thuật toán trong phương pháp thêm 1 node vào cây.
-   Mục đích chính của cây Splay là đưa node mới vừa được thêm 
-   lên làm node gốc của cây. Vì vậy, cả 2 phương pháp mà tôi 
-   tìm hiểu đều không sai dù cho kết quả cây khác nhau. 
+   Mục đích chính của cây Splay là đưa node mới vừa được thêm
+   lên làm node gốc của cây. Vì vậy, cả 2 phương pháp mà tôi
+   tìm hiểu đều không sai dù cho kết quả cây khác nhau.
 
  */
 
@@ -141,14 +141,14 @@ Node *insert(Node *root, int key)
     //         current = current->right;
     //     } else {
     //         current->key = key;
-    //         splay(root, key); 
+    //         splay(root, key);
     //         return root;
     //     }
     // }
 
-    // if (key < parent->key) 
+    // if (key < parent->key)
     //     parent->left = newNode;
-    // else 
+    // else
     //     parent->right = newNode;
     // END: Non-recursive solution
 
@@ -190,7 +190,7 @@ void printSplayTree(Node *root, const string &prefix = "", bool isLeft = false)
         return;
 
     cout << prefix;
-    cout << (isLeft ? "├──" : "└──");
+    cout << (isLeft ? "|---" : "'---");
     cout << "(" << root->key << ")" << endl;
 
     printSplayTree(root->left, prefix + (isLeft ? "│   " : "    "), true);
@@ -206,9 +206,12 @@ int main()
     root = insert(root, 20);
     root = insert(root, 40);
     root = insert(root, 60);
-    root = insert(root, 80);
 
-    cout << "After insertion:" << endl;
+    printSplayTree(root);
+    cout << endl;
+
+    root = insert(root, 80);
+    cout << "After insertion (80):" << endl;
     printSplayTree(root);
     cout << endl;
 
