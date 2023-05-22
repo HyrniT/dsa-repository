@@ -1,223 +1,280 @@
 #include <iostream>
+#include <vector>
+#include <algorithm>
+#include <cmath>
+#include <limits>
 
 using namespace std;
 
-struct Node
+struct Point
 {
-    int key;
-    Node* left;
-    Node* right;
+    vector<int> coordinates;
 };
 
-Node* createNode(int key)
+struct Node
 {
-    Node* newNode = new Node();
-    newNode->key = key;
+    Point location;
+    Node *left;
+    Node *right;
+};
+
+Node *createNode(Point location)
+{
+    Node *newNode = new Node();
+    newNode->location = location;
     newNode->left = nullptr;
     newNode->right = nullptr;
     return newNode;
 }
 
-Node* rotateRight(Node* root)
+bool comparePoints(const Point &a, const Point &b, int axis)
 {
-    Node* temp = root->left;
-    root->left = temp->right;
-    temp->right = root;
-    return temp;
+    return a.coordinates[axis] < b.coordinates[axis];
 }
 
-Node* rotateLeft(Node* root)
+void sortPoints(vector<Point> &points, int axis)
 {
-    Node* temp = root->right;
-    root->right = temp->left;
-    temp->left = root;
-    return temp;
+    sort(points.begin(), points.end(), [&](const Point &a, const Point &b)
+         { return comparePoints(a, b, axis); });
 }
 
-Node* splay(Node* root, int key)
+Node *createTree(vector<Point> &points, int depth)
 {
-    // cout<<root->key<<endl;
-    if (root == nullptr || root->key == key)
-        return root;
-    if (key < root->key)
+    if (points.empty())
     {
-        // Not exist key in tree
-        if (root->left == nullptr)
-            return root;
-
-        /* First rotate */
-        // Zig-Zig
-        if (key < root->left->key)
-        {
-            root->left->left = splay(root->left->left, key);
-            root = rotateRight(root);
-        }
-        // Zag-Zig
-        else if (key > root->left->key)
-        {
-            root->left->right = splay(root->left->right, key);
-            // Exist key in tree
-            if (root->left->right != nullptr)
-                root->left = rotateLeft(root->left);
-        }
-
-        /* Second rotate */
-        if (root->left != nullptr)
-            root = rotateRight(root);
-
-        return root;
-    }
-    else // key > root->key
-    {
-        // Not exist key in tree
-        if (root->right == nullptr)
-            return root;
-
-        /* First rotate */
-        // Zag-Zag
-        if (key > root->right->key)
-        {
-            root->right->right = splay(root->right->right, key);
-            root = rotateLeft(root);
-        }
-        // Zig-Zag
-        else if (key < root->right->key)
-        {
-            root->right->left = splay(root->right->left, key);
-            if (root->right->left != nullptr)
-                root->right = rotateRight(root->right);
-        }
-        /* Second rotate */
-        if (root->right != nullptr)
-            root = rotateLeft(root);
-
-        return root;
-    }
-}
-
-/* Một số lưu ý trong phương thức THÊM 1 node vào cây Splay
-
-   Có 2 phương pháp và mỗi phương pháp sẽ cho kết quả cây
-   khác nhau, sau đây tôi sẽ phân tích:
-
-   - Phương pháp sử dụng đệ quy: Tiến hành xoay node cha của
-   node cần xoay trước, sau đó mới node ông của node cần xoay
-
-   - Phương pháp không sử dụng đệ quy: Tiến hành xoay node ông
-   của node cần xoay trước, sau đó mới xoay node ông của node
-   cần xoay
-
-   Theo như tôi tìm hiểu thì không có sự thống nhất chính thức
-   về mặt thuật toán trong phương pháp thêm 1 node vào cây.
-   Mục đích chính của cây Splay là đưa node mới vừa được thêm
-   lên làm node gốc của cây. Vì vậy, cả 2 phương pháp mà tôi
-   tìm hiểu đều không sai dù cho kết quả cây khác nhau.
-
- */
-
-Node* insert(Node* root, int key)
-{
-    if (root == nullptr)
-        return createNode(key);
-
-    // START: Recursive solution
-    if (key < root->key)
-        root->left = insert(root->left, key);
-    else if (key > root->key)
-        root->right = insert(root->right, key);
-    // END: Recursive solution
-
-    // START: Non-recursive solution
-    // Node* newNode = createNode(key);
-    // Node* current = root;
-    // Node* parent = nullptr;
-
-    // while (current != nullptr) {
-    //     parent = current;
-
-    //     if (key < current->key) {
-    //         current = current->left;
-    //     } else if (key > current->key) {
-    //         current = current->right;
-    //     } else {
-    //         current->key = key;
-    //         splay(root, key);
-    //         return root;
-    //     }
-    // }
-
-    // if (key < parent->key)
-    //     parent->left = newNode;
-    // else
-    //     parent->right = newNode;
-    // END: Non-recursive solution
-
-    return splay(root, key);
-}
-
-Node* remove(Node* root, int key)
-{
-    if (root == nullptr)
-        return root;
-
-    root = splay(root, key);
-
-    if (root->key != key)
-        return root;
-
-    Node* temp = nullptr;
-
-    if (root->left == nullptr)
-    {
-        temp = root;
-        root = root->right;
-    }
-    else
-    {
-        temp = root;
-        root = splay(root->left, key);
-        root->right = temp->right;
+        return nullptr;
     }
 
-    delete temp;
-    temp = nullptr;
+    int k = points[0].coordinates.size();
+    int axis = depth % k;
+
+    // Sort to get median
+    sortPoints(points, axis);
+
+    int medianIndex = points.size() / 2;
+    Point median = points[medianIndex];
+
+    Node *root = createNode(median);
+
+    if (medianIndex > 0)
+    {
+        vector<Point> leftPoints(points.begin(), points.begin() + medianIndex);
+        root->left = createTree(leftPoints, depth + 1);
+    }
+
+    if (medianIndex < points.size() - 1)
+    {
+        vector<Point> rightPoints(points.begin() + medianIndex + 1, points.end());
+        root->right = createTree(rightPoints, depth + 1);
+    }
     return root;
 }
 
-void printSplayTree(Node* root, const string& prefix = "", bool isLeft = true)
+Node *insert(Node *root, Point &point, int depth)
 {
     if (root == nullptr)
+        return createNode(point);
+
+    int k = root->location.coordinates.size();
+    int axis = depth % k;
+
+    if (point.coordinates[axis] < root->location.coordinates[axis])
+        root->left = insert(root->left, point, depth + 1);
+    else
+        root->right = insert(root->right, point, depth + 1);
+
+    return root;
+}
+
+Node *findMin(Node *root, int depth, int axis)
+{
+    if (root == nullptr)
+        return nullptr;
+
+    int k = root->location.coordinates.size();
+    int currentAxis = depth % k;
+
+    // If the current axis is equal to the given axis
+    if (currentAxis == axis)
+    {
+        if (root->left == nullptr)
+            return root;
+        return findMin(root->left, depth + 1, axis);
+    }
+
+    Node *leftMin = findMin(root->left, depth + 1, axis);
+    Node *rightMin = findMin(root->right, depth + 1, axis);
+
+    Node *nodeMin = root;
+
+    if (leftMin != nullptr && leftMin->location.coordinates[axis] < nodeMin->location.coordinates[axis])
+        nodeMin = leftMin;
+    if (rightMin != nullptr && rightMin->location.coordinates[axis] < nodeMin->location.coordinates[axis])
+        nodeMin = rightMin;
+
+    return nodeMin;
+}
+
+Node *remove(Node *root, Point &point, int depth)
+{
+    if (root == nullptr)
+        return nullptr;
+
+    int k = root->location.coordinates.size();
+    int axis = depth % k;
+
+    if (point.coordinates == root->location.coordinates)
+    {
+        // If the right child exists
+        if (root->right != nullptr)
+        {
+            // Find the min node in the right subtree
+            Node *nodeMin = findMin(root->right, depth + 1, axis);
+            // Replace the root node with the min node
+            root->location = nodeMin->location;
+            // Recursively delete the min node in the right subtree
+            root->right = remove(root->right, nodeMin->location, depth + 1);
+        }
+        // If the left child exists
+        else if (root->left != nullptr)
+        {
+            // Find the min node in the left subtree
+            Node *nodeMin = findMin(root->left, depth + 1, axis);
+            // Replace the root node with the min node
+            root->location = nodeMin->location;
+            root->left = remove(root->left, nodeMin->location, depth + 1);
+        }
+        else
+        {
+            delete root;
+            root = nullptr;
+        }
+    }
+    else if (point.coordinates[axis] <= root->location.coordinates[axis])
+        root->left = remove(root->left, point, depth + 1);
+    else
+        root->right = remove(root->right, point, depth + 1);
+
+    return root;
+}
+
+double calculateDistance(const Point &a, const Point &b)
+{
+    double distance = 0.0;
+
+    for (int i = 0; i < a.coordinates.size(); i++)
+        distance += pow(a.coordinates[i] - b.coordinates[i], 2);
+
+    return sqrt(distance);
+}
+
+bool shouldSearchOtherSubtree(const Point &target, const Point &currentBest, double *bestDistance, int axis)
+{
+    double distanceOnAxis = abs(target.coordinates[axis] - currentBest.coordinates[axis]);
+    return distanceOnAxis <= *bestDistance;
+}
+
+Node *findNearestNeighbor(Node *root, Point &target, int depth, Node *bestNode, double *bestDistance)
+{
+    if (root == nullptr)
+        return bestNode;
+
+    int k = root->location.coordinates.size();
+    int axis = depth % k;
+
+    Node *currentBest = bestNode;
+    double currentDistance = calculateDistance(root->location, target);
+
+    if (currentDistance < *bestDistance)
+    {
+        bestNode = root;
+        *bestDistance = currentDistance;
+    }
+
+    Node *nearChild = nullptr;
+    Node *farChild = nullptr;
+
+    if (target.coordinates[axis] < root->location.coordinates[axis])
+    {
+        nearChild = root->left;
+        farChild = root->right;
+    }
+    else
+    {
+        nearChild = root->right;
+        farChild = root->left;
+    }
+
+    bestNode = findNearestNeighbor(nearChild, target, depth + 1, bestNode, bestDistance);
+
+    if (shouldSearchOtherSubtree(target, root->location, bestDistance, axis))
+        bestNode = findNearestNeighbor(farChild, target, depth + 1, bestNode, bestDistance);
+
+    return bestNode;
+}
+
+void printPoint(Node *node)
+{
+    cout << "(";
+    for (int i = 0; i < node->location.coordinates.size(); ++i)
+    {
+        cout << node->location.coordinates[i];
+        if (i < node->location.coordinates.size() - 1)
+            cout << ", ";
+    }
+    cout << ")" << endl;
+}
+
+void printKdTree(Node *node, string prefix = "", bool isLeft = true)
+{
+    if (node == nullptr)
         return;
 
     cout << prefix;
     cout << (isLeft ? "|---" : "'---");
-    cout << "(" << root->key << ")" << endl;
 
-    printSplayTree(root->left, prefix + (isLeft ? "|   " : "    "), true);
-    printSplayTree(root->right, prefix + (isLeft ? "|   " : "    "), false);
+    printPoint(node);
+
+    printKdTree(node->left, prefix + (isLeft ? "|   " : "    "), true);
+
+    printKdTree(node->right, prefix + (isLeft ? "|   " : "    "), false);
 }
 
 int main()
 {
-    Node* root = nullptr;
-    root = insert(root, 50);
-    root = insert(root, 30);
-    root = insert(root, 70);
-    root = insert(root, 20);
-    root = insert(root, 40);
-    root = insert(root, 60);
+    vector<Point> pointList = {
+        {{3, 6}},
+        {{17, 15}},
+        {{13, 15}},
+        {{6, 12}},
+        {{9, 1}},
+        {{2, 7}},
+        {{10, 19}}};
 
-    printSplayTree(root);
+    Node *root = createTree(pointList, 0);
+    printKdTree(root);
     cout << endl;
 
-    root = insert(root, 80);
-    cout << "After insertion (80):" << endl;
-    printSplayTree(root);
+    Point newPoint = {{8, 5}};
+    root = insert(root, newPoint, 0);
+
+    cout << "After insertion (8, 5):" << endl;
+    printKdTree(root);
     cout << endl;
 
-    root = remove(root, 40);
-    cout << "After deletion (40):" << endl;
-    printSplayTree(root);
+    Point deletePoint = {{6, 12}};
+    root = remove(root, deletePoint, 0);
+
+    cout << "After deletion (6, 12):" << endl;
+    printKdTree(root);
     cout << endl;
+
+    double bestDistance = numeric_limits<double>::max();
+    Point target = {{8, 10}};
+    Node *nearestNode = findNearestNeighbor(root, target, 0, nullptr, &bestDistance);
+
+    cout << "Nearest Neighbor to (8, 10): ";
+    printPoint(nearestNode);
+
     return 0;
 }
