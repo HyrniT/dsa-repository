@@ -1,6 +1,7 @@
 #include <iostream>
 #include <vector>
 #include <algorithm>
+#include <cmath>
 
 using namespace std;
 
@@ -25,14 +26,23 @@ Node *createNode(Point location)
     return newNode;
 }
 
+bool comparePoints(const Point& a, const Point& b, int axis) {
+    return a.coordinates[axis] < b.coordinates[axis];
+}
+
 void sortPoints(vector<Point> &points, int axis)
 {
-    sort(points.begin(), points.end(), [&](Point a, Point b)
-         { return a.coordinates[axis] < b.coordinates[axis]; });
+    sort(points.begin(), points.end(), [&](const Point& a, const Point& b) {
+        return comparePoints(a, b, axis);
+    });
 }
 
 Node *createTree(vector<Point> &points, int depth)
 {
+    if (points.empty()) {
+        return nullptr;
+    }
+
     int k = points[0].coordinates.size();
     int axis = depth % k;
 
@@ -47,13 +57,13 @@ Node *createTree(vector<Point> &points, int depth)
     if (medianIndex > 0)
     {
         vector<Point> leftPoints(points.begin(), points.begin() + medianIndex);
-        createTree(leftPoints, depth + 1);
+        root->left = createTree(leftPoints, depth + 1);
     }
 
     if (medianIndex < points.size() - 1)
     {
         vector<Point> rightPoints(points.begin() + medianIndex + 1, points.end());
-        createTree(rightPoints, depth + 1);
+        root->right = createTree(rightPoints, depth + 1);
     }
     return root;
 }
@@ -74,41 +84,33 @@ Node *insert(Node *root, Point &point, int depth)
     return root;
 }
 
-Node *findMin(Node *root, int depth)
+Node *findMin(Node *root, int depth, int axis)
 {
     if (root == nullptr)
         return nullptr;
 
     int k = root->location.coordinates.size();
-    int axis = depth % k;
+    int currentAxis = depth % k;
 
-    // If the current axis is equal to the given depth
-    if (axis == depth)
+    // If the current axis is equal to the given axis
+    if (currentAxis == axis)
     {
         if (root->left == nullptr)
             return root;
-        return findMin(root->left, depth + 1);
+        return findMin(root->left, depth + 1, axis);
     }
 
-    if (axis == depth)
-    {
-        if (root->left == nullptr)
-            return root;
-        return findMin(root->right, depth + 1);
-    }
+    Node *leftMin = findMin(root->left, depth + 1, axis);
+    Node *rightMin = findMin(root->right, depth + 1, axis);
 
-    Node *leftMin = findMin(root->left, depth + 1);
-    Node *rightMin = findMin(root->right, depth + 1);
+    Node *nodeMin = root;
 
-    if (leftMin == nullptr)
-        return rightMin;
-    if (rightMin == nullptr)
-        return leftMin;
+    if (leftMin != nullptr && leftMin->location.coordinates[axis] < nodeMin->location.coordinates[axis])
+        nodeMin = leftMin;
+    if (rightMin != nullptr && rightMin->location.coordinates[axis] < nodeMin->location.coordinates[axis])
+        nodeMin = rightMin;
 
-    return (leftMin->location.coordinates[axis] <
-            rightMin->location.coordinates[axis])
-               ? leftMin
-               : rightMin;
+    return nodeMin;
 }
 
 Node *remove(Node *root, Point &point, int depth)
@@ -119,25 +121,37 @@ Node *remove(Node *root, Point &point, int depth)
     int k = root->location.coordinates.size();
     int axis = depth % k;
 
-    // If the point axis is equal to the root node axis
-    if (point.coordinates[axis] == root->location.coordinates[axis])
+    if(point.coordinates == root->location.coordinates)
     {
-        // If the root node is a leaf node
-        if (root->left == nullptr && root->right == nullptr)
+        // If the right child exists
+        if(root->right != nullptr)
+        {
+            // Find the min node in the right subtree
+            Node* nodeMin = findMin(root->right, depth + 1, axis);
+            // Replace the root node with the min node
+            root->location = nodeMin->location;
+            // Recursively delete the min node in the right subtree
+            root->right = remove(root->right, nodeMin->location, depth + 1);
+        }
+        // If the left child exists
+        else if(root->left != nullptr)
+        {
+            // Find the min node in the left subtree
+            Node* nodeMin = findMin(root->left, depth + 1, axis);
+            // Replace the root node with the min node
+            root->location = nodeMin->location;
+            root->left = remove(root->left, nodeMin->location, depth + 1);
+            root->right = root->left->right;
+            root->left = root->left->left;
+        }
+        else
         {
             delete root;
             root = nullptr;
         }
-        // If the root node has right child
-        else if (root->right != nullptr)
-        {
-            Node *minNode = findMin(root->right, depth);
-        }
     }
-    // If the point axis is less than the root node axis
-    else if (point.coordinates[axis] < root->location.coordinates[axis])
+    else if(point.coordinates[axis] < root->location.coordinates[axis])
         root->left = remove(root->left, point, depth + 1);
-    // If the point axis is more than the root node axis
     else
         root->right = remove(root->right, point, depth + 1);
 
@@ -166,29 +180,34 @@ void printKdTree(Node *node, std::string prefix = "", bool isLeft = false)
     printKdTree(node->right, prefix + (isLeft ? "│   " : "    "), false);
 }
 
-int main() {
-    std::vector<Point> pointList = {
-        { {3, 6} },
-        { {17, 15} },
-        { {13, 15} },
-        { {6, 12} },
-        { {9, 1} },
-        { {2, 7} },
-        { {10, 19} }
+int main()
+{
+    vector<Point> pointList = {
+        {{3, 6}},
+        {{17, 15}},
+        {{13, 15}},
+        {{6, 12}},
+        {{9, 1}},
+        {{2, 7}},
+        {{10, 19}}
     };
 
-    Node* root = createTree(pointList, 0);
+    Node *root = createTree(pointList, 0);
     printKdTree(root);
 
-    Point newPoint = { {8, 5} };
+    Point newPoint;
+    newPoint.coordinates = { {8, 5} };
     root = insert(root, newPoint, 0);
 
-    cout << "After insertion:" << endl;
+    cout << "After insertion (8, 5):" << endl;
     printKdTree(root);
-
+    
+    
     Point pointToDelete = { {6, 12} };
     root = remove(root, pointToDelete, 0);
 
-    cout << "After deletion:" << endl;
+    cout << "After deletion (6, 12):" << endl;
     printKdTree(root);
+
+    return 0;
 }
