@@ -5,36 +5,36 @@ using namespace std;
 struct Node
 {
     int key;
-    Node *left;
-    Node *right;
+    Node* left;
+    Node* right;
 };
 
-Node *createNode(int key)
+Node* createNode(int key)
 {
-    Node *newNode = new Node();
+    Node* newNode = new Node();
     newNode->key = key;
     newNode->left = nullptr;
     newNode->right = nullptr;
     return newNode;
 }
 
-Node *rotateRight(Node *root)
+Node* rotateRight(Node* root)
 {
-    Node *temp = root->left;
+    Node* temp = root->left;
     root->left = temp->right;
     temp->right = root;
     return temp;
 }
 
-Node *rotateLeft(Node *root)
+Node* rotateLeft(Node* root)
 {
-    Node *temp = root->right;
+    Node* temp = root->right;
     root->right = temp->left;
     temp->left = root;
     return temp;
 }
 
-Node *splay(Node *root, int key)
+Node* splay(Node* root, int key)
 {
     // cout<<root->key<<endl;
     if (root == nullptr || root->key == key)
@@ -115,7 +115,7 @@ Node *splay(Node *root, int key)
 
  */
 
-Node *insert(Node *root, int key)
+Node* insert(Node* root, int key)
 {
     if (root == nullptr)
         return createNode(key);
@@ -155,7 +155,7 @@ Node *insert(Node *root, int key)
     return splay(root, key);
 }
 
-Node *remove(Node *root, int key)
+Node* remove(Node* root, int key)
 {
     if (root == nullptr)
         return root;
@@ -165,7 +165,7 @@ Node *remove(Node *root, int key)
     if (root->key != key)
         return root;
 
-    Node *temp = nullptr;
+    Node* temp = nullptr;
 
     if (root->left == nullptr)
     {
@@ -184,7 +184,7 @@ Node *remove(Node *root, int key)
     return root;
 }
 
-void printSplayTree(Node *root, const string &prefix = "", bool isLeft = false)
+void printSplayTree(Node* root, const string& prefix = "", bool isLeft = true)
 {
     if (root == nullptr)
         return;
@@ -193,13 +193,13 @@ void printSplayTree(Node *root, const string &prefix = "", bool isLeft = false)
     cout << (isLeft ? "|---" : "'---");
     cout << "(" << root->key << ")" << endl;
 
-    printSplayTree(root->left, prefix + (isLeft ? "│   " : "    "), true);
-    printSplayTree(root->right, prefix + (isLeft ? "│   " : "    "), false);
+    printSplayTree(root->left, prefix + (isLeft ? "|   " : "    "), true);
+    printSplayTree(root->right, prefix + (isLeft ? "|   " : "    "), false);
 }
 
 int main()
 {
-    Node *root = nullptr;
+    Node* root = nullptr;
     root = insert(root, 50);
     root = insert(root, 30);
     root = insert(root, 70);
