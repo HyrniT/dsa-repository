@@ -2,6 +2,7 @@
 #include <vector>
 #include <algorithm>
 #include <cmath>
+#include <limits>
 
 using namespace std;
 
@@ -13,31 +14,31 @@ struct Point
 struct Node
 {
     Point location;
-    Node* left;
-    Node* right;
+    Node *left;
+    Node *right;
 };
 
-Node* createNode(Point location)
+Node *createNode(Point location)
 {
-    Node* newNode = new Node();
+    Node *newNode = new Node();
     newNode->location = location;
     newNode->left = nullptr;
     newNode->right = nullptr;
     return newNode;
 }
 
-bool comparePoints(const Point& a, const Point& b, int axis)
+bool comparePoints(const Point &a, const Point &b, int axis)
 {
     return a.coordinates[axis] < b.coordinates[axis];
 }
 
-void sortPoints(vector<Point>& points, int axis)
+void sortPoints(vector<Point> &points, int axis)
 {
-    sort(points.begin(), points.end(), [&](const Point& a, const Point& b)
-        { return comparePoints(a, b, axis); });
+    sort(points.begin(), points.end(), [&](const Point &a, const Point &b)
+         { return comparePoints(a, b, axis); });
 }
 
-Node* createTree(vector<Point>& points, int depth)
+Node *createTree(vector<Point> &points, int depth)
 {
     if (points.empty())
     {
@@ -53,7 +54,7 @@ Node* createTree(vector<Point>& points, int depth)
     int medianIndex = points.size() / 2;
     Point median = points[medianIndex];
 
-    Node* root = createNode(median);
+    Node *root = createNode(median);
 
     if (medianIndex > 0)
     {
@@ -69,7 +70,7 @@ Node* createTree(vector<Point>& points, int depth)
     return root;
 }
 
-Node* insert(Node* root, Point& point, int depth)
+Node *insert(Node *root, Point &point, int depth)
 {
     if (root == nullptr)
         return createNode(point);
@@ -85,7 +86,7 @@ Node* insert(Node* root, Point& point, int depth)
     return root;
 }
 
-Node* findMin(Node* root, int depth, int axis)
+Node *findMin(Node *root, int depth, int axis)
 {
     if (root == nullptr)
         return nullptr;
@@ -101,10 +102,10 @@ Node* findMin(Node* root, int depth, int axis)
         return findMin(root->left, depth + 1, axis);
     }
 
-    Node* leftMin = findMin(root->left, depth + 1, axis);
-    Node* rightMin = findMin(root->right, depth + 1, axis);
+    Node *leftMin = findMin(root->left, depth + 1, axis);
+    Node *rightMin = findMin(root->right, depth + 1, axis);
 
-    Node* nodeMin = root;
+    Node *nodeMin = root;
 
     if (leftMin != nullptr && leftMin->location.coordinates[axis] < nodeMin->location.coordinates[axis])
         nodeMin = leftMin;
@@ -114,7 +115,7 @@ Node* findMin(Node* root, int depth, int axis)
     return nodeMin;
 }
 
-Node* remove(Node* root, Point& point, int depth)
+Node *remove(Node *root, Point &point, int depth)
 {
     if (root == nullptr)
         return nullptr;
@@ -128,7 +129,7 @@ Node* remove(Node* root, Point& point, int depth)
         if (root->right != nullptr)
         {
             // Find the min node in the right subtree
-            Node* nodeMin = findMin(root->right, depth + 1, axis);
+            Node *nodeMin = findMin(root->right, depth + 1, axis);
             // Replace the root node with the min node
             root->location = nodeMin->location;
             // Recursively delete the min node in the right subtree
@@ -138,7 +139,7 @@ Node* remove(Node* root, Point& point, int depth)
         else if (root->left != nullptr)
         {
             // Find the min node in the left subtree
-            Node* nodeMin = findMin(root->left, depth + 1, axis);
+            Node *nodeMin = findMin(root->left, depth + 1, axis);
             // Replace the root node with the min node
             root->location = nodeMin->location;
             root->left = remove(root->left, nodeMin->location, depth + 1);
@@ -157,14 +158,63 @@ Node* remove(Node* root, Point& point, int depth)
     return root;
 }
 
-void printKdTree(Node* node, std::string prefix = "", bool isLeft = true)
+double calculateDistance(const Point &a, const Point &b)
 {
-    if (node == nullptr)
-        return;
+    double distance = 0.0;
 
-    cout << prefix;
-    cout << (isLeft ? "|---" : "'---");
+    for (int i = 0; i < a.coordinates.size(); i++)
+        distance += pow(a.coordinates[i] - b.coordinates[i], 2);
 
+    return sqrt(distance);
+}
+
+bool shouldSearchOtherSubtree(const Point &target, const Point &currentBest, double *bestDistance, int axis)
+{
+    double distanceOnAxis = abs(target.coordinates[axis] - currentBest.coordinates[axis]);
+    return distanceOnAxis <= *bestDistance;
+}
+
+Node *findNearestNeighbor(Node *root, const Point &target, int depth, Node *bestNode, double *bestDistance)
+{
+    if (root == nullptr)
+        return bestNode;
+
+    int k = root->location.coordinates.size();
+    int axis = depth % k;
+
+    Node *currentBest = bestNode;
+    double currentDistance = calculateDistance(root->location, target);
+
+    if (currentDistance < *bestDistance)
+    {
+        bestNode = root;
+        *bestDistance = currentDistance;
+    }
+
+    Node *nearChild = nullptr;
+    Node *farChild = nullptr;
+
+    if (target.coordinates[axis] < root->location.coordinates[axis])
+    {
+        nearChild = root->left;
+        farChild = root->right;
+    }
+    else
+    {
+        nearChild = root->right;
+        farChild = root->left;
+    }
+
+    bestNode = findNearestNeighbor(nearChild, target, depth + 1, bestNode, bestDistance);
+
+    if (shouldSearchOtherSubtree(target, root->location, bestDistance, axis))
+        bestNode = findNearestNeighbor(farChild, target, depth + 1, bestNode, bestDistance);
+
+    return bestNode;
+}
+
+void printPoint(Node *node)
+{
     cout << "(";
     for (int i = 0; i < node->location.coordinates.size(); ++i)
     {
@@ -173,6 +223,17 @@ void printKdTree(Node* node, std::string prefix = "", bool isLeft = true)
             cout << ", ";
     }
     cout << ")" << endl;
+}
+
+void printKdTree(Node *node, string prefix = "", bool isLeft = true)
+{
+    if (node == nullptr)
+        return;
+
+    cout << prefix;
+    cout << (isLeft ? "|---" : "'---");
+
+    printPoint(node);
 
     printKdTree(node->left, prefix + (isLeft ? "|   " : "    "), true);
 
@@ -188,25 +249,32 @@ int main()
         {{6, 12}},
         {{9, 1}},
         {{2, 7}},
-        {{10, 19}} };
+        {{10, 19}}};
 
-    Node* root = createTree(pointList, 0);
+    Node *root = createTree(pointList, 0);
     printKdTree(root);
     cout << endl;
 
-    Point newPoint = { {8, 5} };
+    Point newPoint = {{8, 5}};
     root = insert(root, newPoint, 0);
 
     cout << "After insertion (8, 5):" << endl;
     printKdTree(root);
     cout << endl;
 
-    Point deletePoint = { {6, 12} };
+    Point deletePoint = {{6, 12}};
     root = remove(root, deletePoint, 0);
 
     cout << "After deletion (6, 12):" << endl;
     printKdTree(root);
     cout << endl;
+
+    double bestDistance = numeric_limits<double>::max();
+    Point target = {{8, 10}};
+    Node *nearestNode = findNearestNeighbor(root, target, 0, nullptr, &bestDistance);
+
+    cout << "Nearest Neighbor to (8, 10): ";
+    printPoint(nearestNode);
 
     return 0;
 }
