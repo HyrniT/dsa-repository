@@ -5,36 +5,36 @@ using namespace std;
 struct Node
 {
     int key;
-    Node *left;
-    Node *right;
+    Node* left;
+    Node* right;
 };
 
-Node *createNode(int key)
+Node* createNode(int key)
 {
-    Node *newNode = new Node();
+    Node* newNode = new Node();
     newNode->key = key;
     newNode->left = nullptr;
     newNode->right = nullptr;
     return newNode;
 }
 
-Node *rotateRight(Node *root)
+Node* rotateRight(Node* root)
 {
-    Node *temp = root->left;
+    Node* temp = root->left;
     root->left = temp->right;
     temp->right = root;
     return temp;
 }
 
-Node *rotateLeft(Node *root)
+Node* rotateLeft(Node* root)
 {
-    Node *temp = root->right;
+    Node* temp = root->right;
     root->right = temp->left;
     temp->left = root;
     return temp;
 }
 
-Node *splay(Node *root, int key)
+Node* splay(Node* root, int key)
 {
     // cout<<root->key<<endl;
     if (root == nullptr || root->key == key)
@@ -109,13 +109,13 @@ Node *splay(Node *root, int key)
 
    Theo như tôi tìm hiểu thì không có sự thống nhất chính thức
    về mặt thuật toán trong phương pháp thêm 1 node vào cây.
-   Mục đích chính của cây Splay là đưa node mới vừa được thêm 
-   lên làm node gốc của cây. Vì vậy, cả 2 phương pháp mà tôi 
-   tìm hiểu đều không sai dù cho kết quả cây khác nhau. 
+   Mục đích chính của cây Splay là đưa node mới vừa được thêm
+   lên làm node gốc của cây. Vì vậy, cả 2 phương pháp mà tôi
+   tìm hiểu đều không sai dù cho kết quả cây khác nhau.
 
  */
 
-Node *insert(Node *root, int key)
+Node* insert(Node* root, int key)
 {
     if (root == nullptr)
         return createNode(key);
@@ -141,21 +141,21 @@ Node *insert(Node *root, int key)
     //         current = current->right;
     //     } else {
     //         current->key = key;
-    //         splay(root, key); 
+    //         splay(root, key);
     //         return root;
     //     }
     // }
 
-    // if (key < parent->key) 
+    // if (key < parent->key)
     //     parent->left = newNode;
-    // else 
+    // else
     //     parent->right = newNode;
     // END: Non-recursive solution
 
     return splay(root, key);
 }
 
-Node *remove(Node *root, int key)
+Node* remove(Node* root, int key)
 {
     if (root == nullptr)
         return root;
@@ -165,7 +165,7 @@ Node *remove(Node *root, int key)
     if (root->key != key)
         return root;
 
-    Node *temp = nullptr;
+    Node* temp = nullptr;
 
     if (root->left == nullptr)
     {
@@ -184,31 +184,34 @@ Node *remove(Node *root, int key)
     return root;
 }
 
-void printSplayTree(Node *root, const string &prefix = "", bool isLeft = false)
+void printSplayTree(Node* root, const string& prefix = "", bool isLeft = true)
 {
     if (root == nullptr)
         return;
 
     cout << prefix;
-    cout << (isLeft ? "├──" : "└──");
+    cout << (isLeft ? "|---" : "'---");
     cout << "(" << root->key << ")" << endl;
 
-    printSplayTree(root->left, prefix + (isLeft ? "│   " : "    "), true);
-    printSplayTree(root->right, prefix + (isLeft ? "│   " : "    "), false);
+    printSplayTree(root->left, prefix + (isLeft ? "|   " : "    "), true);
+    printSplayTree(root->right, prefix + (isLeft ? "|   " : "    "), false);
 }
 
 int main()
 {
-    Node *root = nullptr;
+    Node* root = nullptr;
     root = insert(root, 50);
     root = insert(root, 30);
     root = insert(root, 70);
     root = insert(root, 20);
     root = insert(root, 40);
     root = insert(root, 60);
-    root = insert(root, 80);
 
-    cout << "After insertion:" << endl;
+    printSplayTree(root);
+    cout << endl;
+
+    root = insert(root, 80);
+    cout << "After insertion (80):" << endl;
     printSplayTree(root);
     cout << endl;
 
