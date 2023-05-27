@@ -1,11 +1,11 @@
 #include <iostream>
 #include <vector>
 #include <string>
- 
+
 #define M 1000
- 
+
 using namespace std;
- 
+
 // Bai 1
 void Bai1()
 {
@@ -27,20 +27,20 @@ void Bai1()
 	}
 	cout << "not exist" << endl;
 }
- 
+
 void Bai2()
 {
 	bool check = false;
 	string s1, s2;
-	//cin.ignore();
+	// cin.ignore();
 	getline(cin, s1);
-	//cin.ignore();
+	// cin.ignore();
 	getline(cin, s2);
 	int n1 = s1.length();
 	int n2 = s2.length();
- 
+
 	char privot = s2[0];
- 
+
 	for (int i = 0; i < n1; i++)
 	{
 		if (s1[i] == privot)
@@ -64,32 +64,32 @@ void Bai2()
 		}
 	}
 	cout << n2 << endl;
- 
+
 	if (check)
 		cout << "exist" << endl;
 	else
 		cout << "not exist" << endl;
 }
- 
-int binarySearch(int arr[], int l, int r, int x)
+
+int binarySearch(vector<int> arr, int l, int r, int x)
 {
-	while (l <= r) {
+	while (l <= r)
+	{
 		int m = l + (r - l) / 2;
- 
+
 		if (arr[m] == x)
 			return m;
- 
+
 		if (arr[m] < x)
 			l = m + 1;
- 
+
 		else
 			r = m - 1;
 	}
- 
+
 	return -1;
 }
- 
- 
+
 void Bai3()
 {
 	int n, x;
@@ -100,11 +100,15 @@ void Bai3()
 		cin >> arr[i];
 	}
 	cin >> x;
- 
+	if (binarySearch(arr, 0, n - 1, x) != -1)
+		cout << "exist" << endl;
+	else
+		cout << "non-exist" << endl;
 }
- 
+
 int main()
 {
-	//Bai1();
-	Bai2();
+	// Bai1();
+	// Bai2();
+	Bai3();
 }
