@@ -1,6 +1,7 @@
 #include <iostream>
 #include <vector>
 #include <string>
+#include <unordered_map>
 
 #define M 1000
 
@@ -193,10 +194,39 @@ void Bai4()
 	cout << result << endl;
 }
 
+void Bai5()
+{
+	int n;
+	cin >> n;
+	vector<int> arr(n);
+	unordered_map<int, int> f;
+	vector<int> r;
+	int m = 0;
+	for (int i = 0; i < n; i++)
+	{
+		cin >> arr[i];
+		f[arr[i]]++;
+		m = max(m, f[arr[i]]);
+	}
+	for (const auto &i : f)
+	{
+		if (i.second == m)
+		{
+			r.push_back(i.first);
+		}
+	}
+	for (const auto &i : r)
+	{
+		cout << i << " ";
+	}
+	cout << endl;
+}
+
 int main()
 {
 	// Bai1();
 	// Bai2();
 	// Bai3();
-	Bai4();
+	// Bai4();
+	Bai5();
 }
