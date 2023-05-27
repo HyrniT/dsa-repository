@@ -41,29 +41,36 @@ void Bai2()
 
 	char privot = s2[0];
 
-	for (int i = 0; i < n1; i++)
+	if (n2 == 1)
 	{
-		if (s1[i] == privot)
+		for (int i = 0; i < n1; i++)
 		{
-			if (n2 == 1)
+			if (s1[i] == privot)
 			{
 				check = true;
-				break;
 			}
-			for (int j = i + 1; j < n1; j++)
+		}
+	}
+	else
+	{
+		for (int i = 0; i < n1; i++)
+		{
+			if (s1[i] == privot)
 			{
-				if (s1[j] != s2[j - i])
+				for (int j = i + 1; j < n1; j++)
 				{
-					break;
-				}
-				if (j - i == n2 - 1)
-				{
-					check = true;
+					if (s1[j] != s2[j - i])
+					{
+						break;
+					}
+					if (j - i == n2 - 1)
+					{
+						check = true;
+					}
 				}
 			}
 		}
 	}
-	cout << n2 << endl;
 
 	if (check)
 		cout << "exist" << endl;
@@ -71,8 +78,11 @@ void Bai2()
 		cout << "not exist" << endl;
 }
 
-int binarySearch(vector<int> arr, int l, int r, int x)
+int binarySearch(vector<int> arr, int x)
 {
+	int l = 0;
+	int r = arr.size();
+
 	while (l <= r)
 	{
 		int m = l + (r - l) / 2;
@@ -90,6 +100,63 @@ int binarySearch(vector<int> arr, int l, int r, int x)
 	return -1;
 }
 
+int binarySearchLeftMost(vector<int> arr, int x)
+{
+	int result = -1;
+	int n = arr.size();
+	int l = 0;
+	int r = n - 1;
+
+	while (l <= r)
+	{
+		int m = l + (r - l) / 2;
+
+		if (arr[m] == x)
+		{
+			result = m;
+			r = m - 1;
+		}
+		else if (arr[m] < x)
+		{
+			l = m + 1;
+		}
+		else
+		{
+			r = m - 1;
+		}
+	}
+
+	return result;
+}
+
+int binarySearchRightMost(vector<int> arr, int x)
+{
+	int result = -1;
+	int l = 0;
+	int r = arr.size();
+
+	while (l <= r)
+	{
+		int m = l + (r - l) / 2;
+
+		if (arr[m] == x)
+		{
+			result = m;
+			l = m + 1;
+		}
+		else if (arr[m] < x)
+		{
+			l = m + 1;
+		}
+		else
+		{
+			r = m - 1;
+		}
+	}
+
+	return result;
+}
+
 void Bai3()
 {
 	int n, x;
@@ -100,15 +167,36 @@ void Bai3()
 		cin >> arr[i];
 	}
 	cin >> x;
-	if (binarySearch(arr, 0, n - 1, x) != -1)
+	if (binarySearch(arr, x) != -1)
 		cout << "exist" << endl;
 	else
 		cout << "non-exist" << endl;
+}
+
+void Bai4()
+{
+	int n, x, result = 0;
+	cin >> n;
+	vector<int> arr(n);
+	for (int i = 0; i < n; i++)
+	{
+		cin >> arr[i];
+	}
+	cin >> x;
+	for (int i = 0; i < n; i++)
+	{
+		if (arr[i] == x)
+		{
+			result++;
+		}
+	}
+	cout << result << endl;
 }
 
 int main()
 {
 	// Bai1();
 	// Bai2();
-	Bai3();
+	// Bai3();
+	Bai4();
 }
