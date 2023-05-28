@@ -303,6 +303,29 @@ void Bai7()
 	cout << endl;
 }
 
+void Bai8()
+{
+	int n1, n2, i = 0, j = 0, k = 0;
+	cin >> n1;
+	vector<int> arr1(n1), arr2(n2), arr3(n1 + n2);
+	for (int i = 0; i < n1; i++)
+	{
+		cin >> arr1[i];
+	}
+	for (int i = 0; i < n2; i++)
+	{
+		cin >> arr2[i];
+	}
+	while (i<n1 && j <n2)
+	{
+		if(arr1[i]<arr2[j])
+		{
+			arr3[k++] = arr1[i];
+			
+		}
+	}
+}
+
 int main()
 {
 	// Bai1();
@@ -311,5 +334,6 @@ int main()
 	// Bai4();
 	// Bai5();
 	// Bai6();
-	Bai7();
+	// Bai7();
+	Bai8();
 }
