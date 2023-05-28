@@ -345,6 +345,41 @@ void Bai8()
 	cout << endl;
 }
 
+void Bai9()
+{
+	int n;
+	cin >> n;
+	vector<int> arr(n);
+	for (int i = 0; i < n; i++)
+	{
+		cin >> arr[i];
+	}
+	int m1 = arr[0];
+	int m2 = arr[1];
+	if (m1 < m2)
+	{
+		swap(m1, m2);
+	}
+	if (n < 3)
+	{
+		cout << m1 + m2 << endl;
+		return;
+	}
+	for (int i = 2; i < n; i++)
+	{
+		if (arr[i] > m2)
+		{
+			m2 = arr[i];
+			if (arr[i] > m1)
+			{
+				m1 = arr[i];
+				m2 = m1;
+			}
+		}
+	}
+	cout << m1 + m2 << endl;
+}
+
 int main()
 {
 	// Bai1();
@@ -354,5 +389,6 @@ int main()
 	// Bai5();
 	// Bai6();
 	// Bai7();
-	Bai8();
+	// Bai8();
+	Bai9();
 }
