@@ -380,6 +380,44 @@ void Bai9()
 	cout << m1 + m2 << endl;
 }
 
+int maxSub(vector<int> arr, int k)
+{
+	int n = arr.size();
+	int m = arr[0] + arr[1] + arr[2];
+	if (arr.size() == k)
+	{
+		return m;
+	}
+	for (int i = 1; i <= n - k; i++)
+	{
+		if (arr[i] + arr[i + 1] + arr[i + 2] > m)
+		{
+			m = arr[i] + arr[i + 1] + arr[i + 2];
+		}
+	}
+	return m;
+}
+
+void Bai10()
+{
+	int n, k;
+	cin >> n;
+	vector<int> arr(n);
+	for (int i = 0; i < n; i++)
+	{
+		cin >> arr[i];
+	}
+	cin >> k;
+	int m = maxSub(arr, k);
+	for (int i = 0; i <= n - k; i++)
+	{
+		if (arr[i] + arr[i + 1] + arr[i + 2] == m)
+		{
+			cout << arr[i] << " " << arr[i + 1] << " " << arr[i + 2] << endl;
+		}
+	}
+}
+
 int main()
 {
 	// Bai1();
@@ -390,5 +428,6 @@ int main()
 	// Bai6();
 	// Bai7();
 	// Bai8();
-	Bai9();
+	// Bai9();
+	Bai10();
 }
