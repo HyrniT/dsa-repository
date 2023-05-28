@@ -307,23 +307,42 @@ void Bai8()
 {
 	int n1, n2, i = 0, j = 0, k = 0;
 	cin >> n1;
-	vector<int> arr1(n1), arr2(n2), arr3(n1 + n2);
+	vector<int> arr1(n1);
 	for (int i = 0; i < n1; i++)
 	{
 		cin >> arr1[i];
 	}
+	cin >> n2;
+	vector<int> arr2(n2);
 	for (int i = 0; i < n2; i++)
 	{
 		cin >> arr2[i];
 	}
-	while (i<n1 && j <n2)
+	vector<int> arr3(n1 + n2);
+	while (i < n1 && j < n2)
 	{
-		if(arr1[i]<arr2[j])
+		if (arr1[i] < arr2[j])
 		{
-			arr3[k++] = arr1[i];
-			
+			arr3[k++] = arr1[i++];
+		}
+		else
+		{
+			arr3[k++] = arr2[j++];
 		}
 	}
+	while (i < n1)
+	{
+		arr3[k++] = arr1[i++];
+	}
+	while (j < n2)
+	{
+		arr3[k++] = arr2[j++];
+	}
+	for (auto const &i : arr3)
+	{
+		cout << i << " ";
+	}
+	cout << endl;
 }
 
 int main()
