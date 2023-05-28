@@ -260,9 +260,47 @@ void Bai6()
 	cout << endl;
 }
 
+int partition(vector<int> &arr, int l, int h)
+{
+	int pivot = arr[h];
+	int j = l;
+	for (int i = l; i < h; i++)
+	{
+		if (arr[i] < pivot)
+		{
+			swap(arr[i], arr[j]);
+			j++;
+		}
+	}
+	swap(arr[j], arr[h]);
+	return j;
+}
+
+void QuickSort(vector<int> &arr, int l, int h)
+{
+	if (l < h)
+	{
+		int pivot = partition(arr, l, h);
+		QuickSort(arr, l, pivot - 1);
+		QuickSort(arr, pivot + 1, h);
+	}
+}
+
 void Bai7()
 {
-
+	int n;
+	cin >> n;
+	vector<int> arr(n);
+	for (int i = 0; i < n; i++)
+	{
+		cin >> arr[i];
+	}
+	QuickSort(arr, 0, n - 1);
+	for (const auto &i : arr)
+	{
+		cout << i << " ";
+	}
+	cout << endl;
 }
 
 int main()
