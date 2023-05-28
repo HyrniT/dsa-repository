@@ -260,6 +260,11 @@ void Bai6()
 	cout << endl;
 }
 
+void Bai7()
+{
+
+}
+
 int main()
 {
 	// Bai1();
@@ -267,5 +272,6 @@ int main()
 	// Bai3();
 	// Bai4();
 	// Bai5();
-	Bai6();
+	// Bai6();
+	Bai7();
 }

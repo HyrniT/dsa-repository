@@ -5,17 +5,17 @@ using namespace std;
 int partition(int arr[], int low, int high)
 {
     int pivot = arr[high];
-    int i, j = low - 1;
+    int i, j = low;
     for (i = low; i < high; i++)
     {
         if (arr[i] < pivot)
         {
-            j++;
             swap(arr[i], arr[j]);
+            j++;
         }
     }
-    swap(arr[j + 1], arr[high]);
-    return j + 1;
+    swap(arr[j], arr[high]);
+    return j;
 }
 
 /**
