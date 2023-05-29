@@ -94,14 +94,6 @@ Node *findMin(Node *root, int depth, int axis)
     int k = root->location.coordinates.size();
     int currentAxis = depth % k;
 
-    // If the current axis is equal to the given axis
-    if (currentAxis == axis)
-    {
-        if (root->left == nullptr)
-            return root;
-        return findMin(root->left, depth + 1, axis);
-    }
-
     Node *leftMin = findMin(root->left, depth + 1, axis);
     Node *rightMin = findMin(root->right, depth + 1, axis);
 
