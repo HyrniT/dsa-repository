@@ -142,6 +142,7 @@ Node *remove(Node *root, Point &point, int depth)
             Node *nodeMin = findMin(root->left, depth + 1, axis);
             // Replace the root node with the min node
             root->location = nodeMin->location;
+            // Recursively delete the min node in the left subtree
             root->left = remove(root->left, nodeMin->location, depth + 1);
         }
         else
