@@ -15,29 +15,22 @@ void merge(int arr[], int l, int m, int r)
     {
         if (left[i] < right[j])
         {
-            arr[k] = left[i];
-            i++;
+            arr[k++] = left[i++];
         }
         else
         {
-            arr[k] = right[j];
-            j++;
+            arr[k++] = right[j++];
         }
-        k++;
     }
 
     while (i < n1)
     {
-        arr[k] = left[i];
-        i++;
-        k++;
+        arr[k++] = left[i++];
     }
 
     while (j < n2)
     {
-        arr[k] = right[j];
-        j++;
-        k++;
+        arr[k++] = right[j++];
     }
 }
 
