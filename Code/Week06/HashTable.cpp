@@ -21,6 +21,10 @@ struct Company
     //     profit_tax = "";
     //     address = "";
     // }
+    string toString() const
+    {
+        return name + "|" + profit_tax + "|" + address;
+    }
 };
 
 struct Node
@@ -39,26 +43,24 @@ struct Node
     }
 };
 
-vector<Company> ReadCompanyList(string file_name)
+
+vector<Company> ReadCompanyList(const string& file_name)
 {
     vector<Company> companies;
     ifstream file(file_name);
     if (file.is_open())
     {
         string line;
+        getline(file, line); // Skip the first line (header)
         while (getline(file, line))
         {
             Company company;
 
-            string name, profit_tax, address;
             stringstream ss(line);
-            getline(ss, name, '|');
-            getline(ss, profit_tax, '|');
-            getline(ss, address);
+            getline(ss, company.name, '|');
+            getline(ss, company.profit_tax, '|');
+            getline(ss, company.address);
 
-            company.name = name;
-            company.profit_tax = profit_tax;
-            company.address = address;
             companies.push_back(company);
         }
         file.close();
@@ -112,18 +114,19 @@ long long HashString(string company_name)
     return sigma;
 }
 
-Node *CreateHashTable(vector<Company> list_company)
+Node* CreateHashTable(const vector<Company>& list_company)
 {
-    Node *hash_table = new Node[TABLE_SIZE];
+    Node* hash_table = new Node[TABLE_SIZE]();
 
-    for (const auto &company : list_company)
+    for (const auto& company : list_company)
     {
-        Node *new_node = new Node(company);
         long long index = HashString(company.name) % TABLE_SIZE;
+
+        Node* new_node = new Node(company);
 
         if (hash_table[index].data.name != "")
         {
-            Node *current_node = &hash_table[index];
+            Node* current_node = &hash_table[index];
             while (current_node->next != nullptr)
                 current_node = current_node->next;
             current_node->next = new_node;
@@ -137,15 +140,15 @@ Node *CreateHashTable(vector<Company> list_company)
     return hash_table;
 }
 
-void Insert(Node *hash_table, Company company)
+void Insert(Node* hash_table, const Company& company)
 {
     long long index = HashString(company.name) % TABLE_SIZE;
 
-    Node *new_node = new Node(company);
+    Node* new_node = new Node(company);
 
     if (hash_table[index].data.name != "")
     {
-        Node *current_node = &hash_table[index];
+        Node* current_node = &hash_table[index];
         while (current_node->next != nullptr)
             current_node = current_node->next;
         current_node->next = new_node;
@@ -156,12 +159,12 @@ void Insert(Node *hash_table, Company company)
     }
 }
 
-Company *Search(Node *hash_table, string company_name)
+const Company* Search(const Node* hash_table, const string& company_name)
 {
     long long index = HashString(company_name) % TABLE_SIZE;
 
-    Node *current_node = &hash_table[index];
-    while (current_node->next != nullptr)
+    const Node* current_node = &hash_table[index];
+    while (current_node != nullptr)
     {
         if (current_node->data.name == company_name)
         {
@@ -176,8 +179,11 @@ Company *Search(Node *hash_table, string company_name)
 int main()
 {
     vector<Company> companies = ReadCompanyList("MST.txt");
+    // for(const auto& company : companies) {
+    //     cout << company.toString() << endl;
+    // }
 
-    Node *hash_table = CreateHashTable(companies);
+    Node* hash_table = CreateHashTable(companies);
 
     Company new_company;
     new_company.name = "New Company";
@@ -185,7 +191,7 @@ int main()
     new_company.address = "123 Main St";
     Insert(hash_table, new_company);
 
-    Company* search_company = Search(hash_table, "New Company");
+    const Company* search_company = Search(hash_table, "New Company");
     if (search_company != nullptr)
         cout << "Found: " << search_company->name << endl;
     else
@@ -195,3 +201,4 @@ int main()
 
     return 0;
 }
+
