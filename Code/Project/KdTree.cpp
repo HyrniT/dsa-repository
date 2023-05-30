@@ -107,6 +107,27 @@ Node *findMin(Node *root, int depth, int axis)
     return nodeMin;
 }
 
+Node *findMax(Node *root, int depth, int axis)
+{
+    if (root == nullptr)
+        return nullptr;
+
+    int k = root->location.coordinates.size();
+    int currentAxis = depth % k;
+
+    Node *leftMax = findMax(root->left, depth + 1, axis);
+    Node *rightMax = findMax(root->right, depth + 1, axis);
+
+    Node *nodeMax = root;
+
+    if (leftMax != nullptr && leftMax->location.coordinates[axis] > nodeMax->location.coordinates[axis])
+        nodeMax = leftMax;
+    if (rightMax != nullptr && rightMax->location.coordinates[axis] > nodeMax->location.coordinates[axis])
+        nodeMax = rightMax;
+
+    return nodeMax;
+}
+
 Node *remove(Node *root, Point &point, int depth)
 {
     if (root == nullptr)
@@ -130,12 +151,12 @@ Node *remove(Node *root, Point &point, int depth)
         // If the left child exists
         else if (root->left != nullptr)
         {
-            // Find the min node in the left subtree
-            Node *nodeMin = findMin(root->left, depth + 1, axis);
-            // Replace the root node with the min node
-            root->location = nodeMin->location;
-            // Recursively delete the min node in the left subtree
-            root->left = remove(root->left, nodeMin->location, depth + 1);
+            // Find the max node in the left subtree
+            Node *nodeMax = findMax(root->left, depth + 1, axis);
+            // Replace the root node with the max node
+            root->location = nodeMax->location;
+            // Recursively delete the max node in the left subtree
+            root->left = remove(root->left, nodeMax->location, depth + 1);
         }
         else
         {
