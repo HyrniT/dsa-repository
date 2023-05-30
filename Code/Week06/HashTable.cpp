@@ -6,8 +6,8 @@
 
 using namespace std;
 
-const long long M = 1e9 + 9;
-const long long BASE = 31;
+const unsigned int M = 1e9 + 9;
+const unsigned int BASE = 31;
 const int TABLE_SIZE = 200;
 
 struct Company
@@ -84,28 +84,28 @@ void WriteCompanyList(string file_name, const vector<Company> &companies)
         file.close();
     }
 }
-long long power(long long base, int n)
+unsigned int power(unsigned int base, int n)
 {
     if (n == 0)
         return 1;
     if (n % 2 == 0)
     {
-        long long half = power(base, n / 2);
+        unsigned int half = power(base, n / 2);
         return (half * half) % M;
     }
     else
     {
-        long long half = power(base, (n - 1) / 2);
+        unsigned int half = power(base, (n - 1) / 2);
         return (half * half * base) % M;
     }
 }
 
-long long HashString(string company_name)
+unsigned int HashString(string company_name)
 {
     int n = company_name.length();
     string s = (n > 20) ? company_name.substr(n - 20) : company_name;
-    long long sigma = 0;
-    long long pow_base = 1;
+    unsigned int sigma = 0;
+    unsigned int pow_base = 1;
     for (int i = 0; i < n; i++)
     {
         sigma = (sigma + (int)s[i] * pow_base) % M;
@@ -120,7 +120,7 @@ Node* CreateHashTable(const vector<Company>& list_company)
 
     for (const auto& company : list_company)
     {
-        long long index = HashString(company.name) % TABLE_SIZE;
+        unsigned int index = HashString(company.name) % TABLE_SIZE;
 
         Node* new_node = new Node(company);
 
@@ -142,7 +142,7 @@ Node* CreateHashTable(const vector<Company>& list_company)
 
 void Insert(Node* hash_table, const Company& company)
 {
-    long long index = HashString(company.name) % TABLE_SIZE;
+    unsigned int index = HashString(company.name) % TABLE_SIZE;
 
     Node* new_node = new Node(company);
 
@@ -161,7 +161,7 @@ void Insert(Node* hash_table, const Company& company)
 
 const Company* Search(const Node* hash_table, const string& company_name)
 {
-    long long index = HashString(company_name) % TABLE_SIZE;
+    unsigned int index = HashString(company_name) % TABLE_SIZE;
 
     const Node* current_node = &hash_table[index];
     while (current_node != nullptr)
@@ -179,9 +179,9 @@ const Company* Search(const Node* hash_table, const string& company_name)
 int main()
 {
     vector<Company> companies = ReadCompanyList("MST.txt");
-    // for(const auto& company : companies) {
-    //     cout << company.toString() << endl;
-    // }
+    for(const auto& company : companies) {
+        cout << company.toString() << endl;
+    }
 
     Node* hash_table = CreateHashTable(companies);
 
