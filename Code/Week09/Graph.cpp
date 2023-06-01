@@ -93,6 +93,21 @@ public:
             }
         }
     }
+
+    void calculateDegree()
+    {
+        for(int i = 0; i < V; i++)
+        {
+            cout << i << " ";
+            int in = 0, out = 0;
+            for(int j = 0; j < V; j++)
+            {
+                in += adjMatrix[j][i];
+                out += adjMatrix[i][j];
+            }
+            cout << in << " " << out << endl;
+        }
+    }
 };
 
 int main()
@@ -127,4 +142,7 @@ int main()
     graph.BFS(0);
     cout << endl;
 
+    /* Exercise 4 */
+    graph.calculateDegree();
+    cout << endl;
 }
