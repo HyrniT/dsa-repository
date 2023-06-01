@@ -95,26 +95,6 @@ Node* splay(Node* root, int key)
     }
 }
 
-/* Một số lưu ý trong phương thức THÊM 1 node vào cây Splay
-
-   Có 2 phương pháp và mỗi phương pháp sẽ cho kết quả cây
-   khác nhau, sau đây tôi sẽ phân tích:
-
-   - Phương pháp sử dụng đệ quy: Tiến hành xoay node cha của
-   node cần xoay trước, sau đó mới node ông của node cần xoay
-
-   - Phương pháp không sử dụng đệ quy: Tiến hành xoay node ông
-   của node cần xoay trước, sau đó mới xoay node ông của node
-   cần xoay
-
-   Theo như tôi tìm hiểu thì không có sự thống nhất chính thức
-   về mặt thuật toán trong phương pháp thêm 1 node vào cây.
-   Mục đích chính của cây Splay là đưa node mới vừa được thêm
-   lên làm node gốc của cây. Vì vậy, cả 2 phương pháp mà tôi
-   tìm hiểu đều không sai dù cho kết quả cây khác nhau.
-
- */
-
 Node* insert(Node* root, int key)
 {
     if (root == nullptr)
