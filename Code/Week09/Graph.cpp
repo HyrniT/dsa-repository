@@ -67,6 +67,32 @@ public:
             }
         }
     }
+
+    void BFS(int startVertex)
+    {
+        vector<bool> visited(V, false);
+        queue<int> queue;
+
+        queue.push(startVertex);
+        visited[startVertex] = true;
+
+        while(!queue.empty())
+        {
+            int currentVertex = queue.front();
+            queue.pop();
+
+            cout << currentVertex << " ";
+
+            for(int neighbor : adjList[currentVertex])
+            {
+                if(!visited[neighbor])
+                {
+                    queue.push(neighbor);
+                    visited[neighbor] = true;
+                }
+            }
+        }
+    }
 };
 
 int main()
@@ -98,5 +124,7 @@ int main()
     cout << endl;
 
     /* Exercise 3 */
+    graph.BFS(0);
+    cout << endl;
 
 }
