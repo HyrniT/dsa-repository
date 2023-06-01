@@ -39,27 +39,33 @@ public:
             cout << endl;
         }
     }
+
+    void DFS()
+    {
+
+    }
 };
 
 int main()
 {
-    int V, E;
+    /* Exercise 1 */
+    int V = 5, E = 6;
     // cout << "Number of vertices: ";
-    cin >> V;
+    // cin >> V;
     // cout << "Number of edges: ";
-    cin >> E;
+    // cin >> E;
     Graph graph(V, E);
-    int v, w;
-    for (int i = 0; i < E; i++)
-    {
-        cin >> v >> w;
-        graph.addEdge(v, w);
-    }
-    // graph.addEdge(0, 1);
-    // graph.addEdge(0, 2);
-    // graph.addEdge(1, 2);
-    // graph.addEdge(1, 4);
-    // graph.addEdge(2, 3);
-    // graph.addEdge(3, 4);
+    // int v, w;
+    // for (int i = 0; i < E; i++)
+    // {
+    //     cin >> v >> w;
+    //     graph.addEdge(v, w);
+    // }
+    graph.addEdge(0, 1);
+    graph.addEdge(0, 2);
+    graph.addEdge(1, 2);
+    graph.addEdge(1, 4);
+    graph.addEdge(2, 3);
+    graph.addEdge(3, 4);
     graph.printAdjMatrix();
 }
