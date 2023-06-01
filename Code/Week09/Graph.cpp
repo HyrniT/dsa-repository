@@ -1,5 +1,7 @@
 #include <iostream>
 #include <vector>
+#include <stack>
+#include <queue>
 
 using namespace std;
 
@@ -40,9 +42,30 @@ public:
         }
     }
 
-    void DFS()
+    void DFS(int startVertex)
     {
+        vector<bool> visited(V, false);
+        stack<int> stack;
+        
+        stack.push(startVertex);
+        visited[startVertex] = true;
 
+        while(!stack.empty())
+        {
+            int currentVertex = stack.top();
+            stack.pop();
+
+            cout << currentVertex << " ";
+
+            for(int neighbor : adjList[currentVertex])
+            {
+                if(!visited[neighbor])
+                {
+                    stack.push(neighbor);
+                    visited[neighbor] = true;
+                }
+            }
+        }
     }
 };
 
@@ -68,4 +91,12 @@ int main()
     graph.addEdge(2, 3);
     graph.addEdge(3, 4);
     graph.printAdjMatrix();
+    cout << endl;
+
+    /* Exercise 2 */
+    graph.DFS(0);
+    cout << endl;
+
+    /* Exercise 3 */
+
 }
