@@ -46,7 +46,7 @@ public:
     {
         vector<bool> visited(V, false);
         stack<int> stack;
-        
+
         stack.push(startVertex);
         visited[startVertex] = true;
 
@@ -116,7 +116,7 @@ public:
         vector<bool> visited(V, false);
         vector<int> temp;
         stack<int> stack;
-        bool finded = false;
+        bool found = false;
 
         stack.push(startVertex);
         visited[startVertex] = true;
@@ -125,12 +125,12 @@ public:
         {
             int currentVertex = stack.top();
             stack.pop();
-            
+
             temp.push_back(currentVertex);
 
             if (currentVertex == endVertex)
             {
-                finded = true;
+                found = true;
                 break;
             }
 
@@ -144,15 +144,56 @@ public:
             }
         }
 
-        if(finded) 
+        if (found)
         {
-            for(int v : temp) 
+            for (int v : temp)
                 cout << v << " ";
         }
         else
-        {
             cout << "non-exist path";
+        cout << endl;
+    }
+
+    void BFS(int startVertex, int endVertex)
+    {
+        vector<bool> visisted(V, false);
+        queue<int> queue;
+        vector<int> temp;
+        bool found = false;
+
+        queue.push(startVertex);
+        visisted[startVertex] = true;
+
+        while (!queue.empty())
+        {
+            int currentVertex = queue.front();
+            queue.pop();
+
+            temp.push_back(currentVertex);
+
+            if (currentVertex == endVertex)
+            {
+                found = true;
+                break;
+            }
+
+            for (int adjVertex : adjList[currentVertex])
+            {
+                if (!visisted[adjVertex])
+                {
+                    queue.push(adjVertex);
+                    visisted[adjVertex] = true;
+                }
+            }
         }
+
+        if (found)
+        {
+            for (int v : temp)
+                cout << v << " ";
+        }
+        else
+            cout << "non-exist path";
         cout << endl;
     }
 };
@@ -197,5 +238,7 @@ int main()
     graph.DFS(4, 0);
     cout << endl;
 
-    /* */
+    /* Exercise 6 */
+    graph.BFS(4, 0);
+    cout << endl;
 }
