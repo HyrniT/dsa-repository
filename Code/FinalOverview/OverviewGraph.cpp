@@ -196,6 +196,172 @@ public:
 
         file.close();
     }
+
+    void DFS(int startVertex, int endVertex)
+    {
+        vector<bool> visited(V, false);
+        vector<int> temp;
+        stack<int> stack;
+        bool found = false;
+
+        stack.push(startVertex);
+        visited[startVertex] = true;
+
+        while (!stack.empty())
+        {
+            int currentVertex = stack.top();
+            stack.pop();
+
+            temp.push_back(currentVertex);
+
+            if (currentVertex == endVertex)
+            {
+                found = true;
+                break;
+            }
+
+            for (int adjVertex : adjList[currentVertex])
+            {
+                if (!visited[adjVertex])
+                {
+                    stack.push(adjVertex);
+                    visited[adjVertex] = true;
+                }
+            }
+        }
+
+        if (found)
+        {
+            for (int v : temp)
+                cout << v << " ";
+        }
+        else
+            cout << "non-exist path";
+        cout << endl;
+    }
+
+    void BFS(int startVertex, int endVertex)
+    {
+        vector<bool> visisted(V, false);
+        queue<int> queue;
+        vector<int> temp;
+        bool found = false;
+
+        queue.push(startVertex);
+        visisted[startVertex] = true;
+
+        while (!queue.empty())
+        {
+            int currentVertex = queue.front();
+            queue.pop();
+
+            temp.push_back(currentVertex);
+
+            if (currentVertex == endVertex)
+            {
+                found = true;
+                break;
+            }
+
+            for (int adjVertex : adjList[currentVertex])
+            {
+                if (!visisted[adjVertex])
+                {
+                    queue.push(adjVertex);
+                    visisted[adjVertex] = true;
+                }
+            }
+        }
+
+        if (found)
+        {
+            for (int v : temp)
+                cout << v << " ";
+        }
+        else
+            cout << "non-exist path";
+        cout << endl;
+    }
+
+    vector<int> shortestDFS(int startVertex, int endVertex)
+    {
+        vector<bool> visited(V, false);
+        vector<int> previous(V, -1);
+        stack<int> stack;
+
+        visited[startVertex] = true;
+        stack.push(startVertex);
+
+        while(!stack.empty())
+        {
+            int currentVertex = stack.top();
+            stack.pop();
+
+            if(currentVertex == endVertex)
+                break;
+
+            for(int adjVertex : adjList[currentVertex])
+            {
+                if(!visited[adjVertex])
+                {
+                    visited[adjVertex] = true;
+                    previous[adjVertex] = currentVertex;
+                    stack.push(adjVertex);
+                }
+            }
+        }
+
+        vector<int> shortestPath;
+        int vertex = endVertex;
+        while (vertex != -1)
+        {
+            shortestPath.push_back(vertex);
+            vertex = previous[vertex];
+        }
+        reverse(shortestPath.begin(), shortestPath.end());
+
+        return shortestPath;
+    }
+
+    vector<int> shortestBFS(int startVertex, int endVertex)
+    {
+        vector<bool> visited(V, false);
+        vector<int> previous(V, -1);
+        queue<int> queue;
+
+        visited[startVertex] = true;
+        queue.push(startVertex);
+
+        while (!queue.empty())
+        {
+            int currentVertex = queue.front();
+            queue.pop();
+
+            if (currentVertex == endVertex)
+                break;
+
+            for (int adjVertex : adjList[currentVertex])
+            {
+                if (!visited[adjVertex])
+                {
+                    visited[adjVertex] = true;
+                    previous[adjVertex] = currentVertex;
+                    queue.push(adjVertex);
+                }
+            }
+        }
+
+        vector<int> shortestPath;
+        int vertex = endVertex;
+        while (vertex != -1)
+        {
+            shortestPath.push_back(vertex);
+            vertex = previous[vertex];
+        }
+        reverse(shortestPath.begin(), shortestPath.end());
+
+        return shortestPath;
+    }
 };
 
 int main()
@@ -210,4 +376,20 @@ int main()
     graph.printAdjMatrix();
     graph.printAdjList();
     graph.writeAdjList("output2.txt");
+
+    cout << "Shortest path from vertex 0 to 4 (use DFS): ";
+    vector<int> shortestPathDFS = graph.shortestDFS(0, 4);
+    for (int vertex : shortestPathDFS)
+        cout << vertex << " ";
+    cout << endl;
+
+    cout << "Shortest path from vertex 0 to 4 (use BFS): ";
+    vector<int> shortestPathBFS = graph.shortestBFS(0, 4);
+    for (int vertex : shortestPathBFS)
+        cout << vertex << " ";
+    cout << endl;
+
+
+
+    return 0;
 }
