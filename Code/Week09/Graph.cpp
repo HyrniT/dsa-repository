@@ -50,22 +50,23 @@ public:
         stack.push(startVertex);
         visited[startVertex] = true;
 
-        while(!stack.empty())
+        while (!stack.empty())
         {
             int currentVertex = stack.top();
             stack.pop();
 
             cout << currentVertex << " ";
 
-            for(int neighbor : adjList[currentVertex])
+            for (int adjVertex : adjList[currentVertex])
             {
-                if(!visited[neighbor])
+                if (!visited[adjVertex])
                 {
-                    stack.push(neighbor);
-                    visited[neighbor] = true;
+                    stack.push(adjVertex);
+                    visited[adjVertex] = true;
                 }
             }
         }
+        cout << endl;
     }
 
     void BFS(int startVertex)
@@ -76,37 +77,83 @@ public:
         queue.push(startVertex);
         visited[startVertex] = true;
 
-        while(!queue.empty())
+        while (!queue.empty())
         {
             int currentVertex = queue.front();
             queue.pop();
 
             cout << currentVertex << " ";
 
-            for(int neighbor : adjList[currentVertex])
+            for (int adjVertex : adjList[currentVertex])
             {
-                if(!visited[neighbor])
+                if (!visited[adjVertex])
                 {
-                    queue.push(neighbor);
-                    visited[neighbor] = true;
+                    queue.push(adjVertex);
+                    visited[adjVertex] = true;
                 }
             }
         }
+        cout << endl;
     }
 
     void calculateDegree()
     {
-        for(int i = 0; i < V; i++)
+        for (int i = 0; i < V; i++)
         {
             cout << i << " ";
             int in = 0, out = 0;
-            for(int j = 0; j < V; j++)
+            for (int j = 0; j < V; j++)
             {
                 in += adjMatrix[j][i];
                 out += adjMatrix[i][j];
             }
             cout << in << " " << out << endl;
         }
+    }
+
+    void DFS(int startVertex, int endVertex)
+    {
+        vector<bool> visited(V, false);
+        vector<int> temp;
+        stack<int> stack;
+        bool finded = false;
+
+        stack.push(startVertex);
+        visited[startVertex] = true;
+
+        while (!stack.empty())
+        {
+            int currentVertex = stack.top();
+            stack.pop();
+            
+            temp.push_back(currentVertex);
+
+            if (currentVertex == endVertex)
+            {
+                finded = true;
+                break;
+            }
+
+            for (int adjVertex : adjList[currentVertex])
+            {
+                if (!visited[adjVertex])
+                {
+                    stack.push(adjVertex);
+                    visited[adjVertex] = true;
+                }
+            }
+        }
+
+        if(finded) 
+        {
+            for(int v : temp) 
+                cout << v << " ";
+        }
+        else
+        {
+            cout << "non-exist path";
+        }
+        cout << endl;
     }
 };
 
@@ -145,4 +192,10 @@ int main()
     /* Exercise 4 */
     graph.calculateDegree();
     cout << endl;
+
+    /* Exercise 5 */
+    graph.DFS(4, 0);
+    cout << endl;
+
+    /* */
 }
