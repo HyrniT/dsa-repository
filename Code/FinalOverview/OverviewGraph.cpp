@@ -17,14 +17,21 @@ private:
     int E;
 
     // Use for BFS and DFS
-    vector< vector<int> > adjList;
-    vector< vector<int> > adjMatrix;
+    vector<vector<int> > adjList;
+    vector<vector<int> > adjMatrix;
 
     // Use for Dijkstra and Prim
-    vector< vector<pii> > adjListWeight;
+    vector<vector<pii> > adjListWeight;
 
 public:
     Graph() {}
+
+    Graph(int vertices)
+    {
+        V = vertices;
+        adjListWeight.resize(V);
+        adjMatrix.resize(V, vector<int>(V));
+    }
 
     Graph(int vertices, int edges)
     {
@@ -45,9 +52,10 @@ public:
     void addEdgeWeight(int u, int v, int w)
     {
         adjListWeight[u].push_back(make_pair(v, w));
-        // adjListWeight[v].push_back(make_pair(u, w));
+        adjListWeight[v].push_back(make_pair(u, w));
 
-        adjMatrix[u][v]++;
+        adjMatrix[u][v] = w;
+        adjMatrix[v][u] = w;
     }
 
     void readAdjList(string fileName)
@@ -434,6 +442,7 @@ public:
                 }
             }
         }
+        return distance;
     }
 
     vector<int> shortestDijkstra(int startVertex, int endVertex)
@@ -488,7 +497,52 @@ public:
 
     vector<pii> Prim()
     {
-        
+        vector<bool> visited(V, false);
+        vector<int> distance(V, INT_MAX);
+        vector<int> previous(V, -1);
+        int totalWeight = 0;
+
+        priority_queue<pii, vector<pii>, greater<pii> > pq;
+
+        int startVertex = 0;
+        distance[startVertex] = 0;
+        pq.push(make_pair(0, startVertex));
+
+        while (!pq.empty())
+        {
+            int u = pq.top().second;
+            int w = pq.top().first;
+            pq.pop();
+
+            if (visited[u])
+                continue;
+
+            visited[u] = true;
+            totalWeight += w;
+            
+            for (const auto &adjVertex : adjListWeight[u])
+            {
+                int v = adjVertex.first;
+                int weight = adjVertex.second;
+
+                if (!visited[v] && weight < distance[v])
+                {
+                    distance[v] = weight;
+                    pq.push(make_pair(distance[v], v));
+                    previous[v] = u;
+                }
+            }
+        }
+
+        cout << "Min MST of graph: " << totalWeight << endl;
+
+        vector<pii> mst;
+        for (int v = 1; v < V; v++)
+        {
+            mst.push_back(make_pair(previous[v], v));
+        }
+
+        return mst;
     }
 };
 
@@ -517,7 +571,29 @@ int main()
         cout << vertex << " ";
     cout << endl;
 
+    freopen("input3.txt", "r", stdin);
+    int V;
+    cin >> V;
+    Graph g(V);
+    
+    for (int i = 0; i < V; i++)
+    {
+        for (int j = 0; j < V; j++)
+        {
+            int weight;
+            cin >> weight;
+            if (weight > 0)
+            {
+                g.addEdgeWeight(i, j, weight);
+            }
+        }
+    }
 
+    vector<pii> mst = g.Prim();
+    for (const auto &v : mst)
+    {
+        cout << v.first << " " << v.second << endl;
+    }
 
     return 0;
 }
