@@ -4,19 +4,28 @@
 #include <queue>
 #include <fstream>
 #include <sstream>
+#include <climits>
 
 using namespace std;
 
+//          dist  node
+typedef pair<int, int> pii;
 class Graph
 {
 private:
     int V;
     int E;
+
+    // Use for BFS and DFS
     vector< vector<int> > adjList;
     vector< vector<int> > adjMatrix;
 
+    // Use for Dijkstra and Prim
+    vector< vector<pii> > adjListWeight;
+
 public:
     Graph() {}
+
     Graph(int vertices, int edges)
     {
         V = vertices;
@@ -24,12 +33,21 @@ public:
         adjList.resize(V);
         adjMatrix.resize(V, vector<int>(V));
     }
+
     void addEdge(int v, int w)
     {
         adjList[v].push_back(w);
         // adjList[w].push_back(v);
 
         adjMatrix[v][w]++;
+    }
+
+    void addEdgeWeight(int u, int v, int w)
+    {
+        adjListWeight[u].push_back(make_pair(v, w));
+        // adjListWeight[v].push_back(make_pair(u, w));
+
+        adjMatrix[u][v]++;
     }
 
     void readAdjList(string fileName)
@@ -49,6 +67,30 @@ public:
                 addEdge(v, w);
             }
 
+            file.close();
+        }
+        else
+        {
+            cout << "Unable to open the file." << endl;
+        }
+    }
+
+    void readAdjListWithWeight(string fileName)
+    {
+        ifstream file(fileName);
+        if (file.is_open())
+        {
+            file >> V >> E;
+            adjListWeight.resize(V);
+            adjMatrix.resize(V, vector<int>(V));
+
+            int u, v, w;
+            for (int i = 0; i < E; i++)
+            {
+                file >> u >> v >> w;
+                addEdgeWeight(u, v, w);
+            }
+            
             file.close();
         }
         else
@@ -361,6 +403,92 @@ public:
         reverse(shortestPath.begin(), shortestPath.end());
 
         return shortestPath;
+    }
+
+    vector<int> Dijkstra(int startVertex)
+    {
+        vector<bool> visited(V, false);
+        vector<int> distance(V, INT_MAX);
+
+        priority_queue<pii, vector<pii>, greater<pii> > pq;
+
+        pq.push(make_pair(0, startVertex));
+        distance[startVertex] = 0;
+
+        while (!pq.empty())
+        {
+            int u = pq.top().second;
+            pq.pop();
+
+            visited[u] = true;
+
+            for (const auto &adjVertex : adjListWeight[u])
+            {
+                int v = adjVertex.first;
+                int weight = adjVertex.second;
+
+                if (!visited[v] && distance[u] + weight < distance[v])
+                {
+                    distance[v] = distance[u] + weight;
+                    pq.push(make_pair(distance[v], v));
+                }
+            }
+        }
+    }
+
+    vector<int> shortestDijkstra(int startVertex, int endVertex)
+    {
+        vector<bool> visited(V, false);
+        vector<int> distance(V, INT_MAX);
+        vector<int> previous(V, -1);
+
+        priority_queue<pii, vector<pii>, greater<pii> > pq;
+
+        distance[startVertex] = 0;
+        pq.push(make_pair(0, startVertex));
+
+        while (!pq.empty())
+        {
+            int u = pq.top().second;
+            pq.pop();
+
+            visited[u] = true;
+
+            for (const auto &adjVertex : adjListWeight[u])
+            {
+                int v = adjVertex.first;
+                int weight = adjVertex.second;
+
+                if (!visited[v] && distance[u] + weight < distance[v])
+                {
+                    distance[v] = distance[u] + weight;
+                    previous[v] = u;
+                    pq.push(make_pair(distance[v], v));
+                }
+            }
+        }
+
+        if (distance[endVertex] == INT_MAX)
+        {
+            cout << "Not found path from " << startVertex << " to " << endVertex << endl;
+            return vector<int>();
+        }
+
+        vector<int> path;
+        int current = endVertex;
+        while (current != -1)
+        {
+            path.push_back(current);
+            current = previous[current];
+        }
+
+        reverse(path.begin(), path.end());
+        return path;
+    }
+
+    vector<pii> Prim()
+    {
+        
     }
 };
 

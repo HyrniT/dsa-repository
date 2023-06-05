@@ -26,6 +26,7 @@ public:
 
     vector<int> shortestPathDijkstra(int startVertex, int endVertex)
     {
+        vector<bool> visited(V, false);
         vector<int> distance(V, INT_MAX);
         vector<int> previous(V, -1);
         priority_queue<pair<int, int>, vector<pair<int, int> >, greater<pair<int, int> > > pq;
@@ -38,17 +39,18 @@ public:
             int u = pq.top().second;
             pq.pop();
 
+            visited[u] = true;
+
             for (const auto &neighbor : adjList[u])
             {
                 int v = neighbor.first;
                 int weight = neighbor.second;
-                int newDistance = distance[u] + weight;
-
-                if (newDistance < distance[v])
+                
+                if (!visited[v] && distance[u] + weight < distance[v])
                 {
-                    distance[v] = newDistance;
-                    previous[v] = u;
+                    distance[v] = distance[u] + weight;
                     pq.push(make_pair(distance[v], v));
+                    previous[v] = u;
                 }
             }
         }
