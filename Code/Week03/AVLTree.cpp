@@ -145,9 +145,6 @@ void Balance(NODE *&pRoot)
             rotateRightLeft(pRoot);
         }
     }
-    // Cân bằng lại các cây con
-    Balance(pRoot->p_left);
-    Balance(pRoot->p_right);
 }
 
 // Thêm một NODE có giá trị cho trước vào cây AVL cho trước
