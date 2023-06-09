@@ -158,7 +158,7 @@ void Insert(NODE *&pRoot, int x)
         Insert(pRoot->p_right, x);
     else // x == pRoot->key
         return;
-    // Cập nhật chiều cao node mởi thêm vào
+    // Cập nhật chiều cao
     updateHeight(pRoot);
     // Cân bằng cây
     Balance(pRoot);
@@ -186,6 +186,16 @@ void Insert(NODE *&pRoot, int x)
     //     }
     // }
 }
+
+NODE *findMinNode(NODE *pRoot)
+{
+    if (pRoot == nullptr)
+        return nullptr;
+    while (pRoot->p_left != nullptr)
+        pRoot = pRoot->p_left;
+    return pRoot;
+}
+
 
 // Xóa một NODE với giá trị cho trước từ một cây AVL cho trước
 void Remove(NODE *&pRoot, int x)
@@ -223,18 +233,17 @@ void Remove(NODE *&pRoot, int x)
         // Node có cả cây con bên trái và cây con bên phải
         else
         {
-            // Tìm node trái nhất của cây con bên phải (hoặc node phải nhất của cây con trái)
-            NODE *temp = pRoot->p_right;
-            while (temp != nullptr)
-            {
-                temp = temp->p_left;
-            }
+            // Tìm node trái nhất của cây con bên phải 
+            NODE *minNode = findMinNode(pRoot->p_right);
             // Copy giá trị của node trái nhất sang node cần xoá
-            pRoot->key = temp->key;
+            pRoot->key = minNode->key;
             // Xoá node trái nhất của cây con phải
-            Remove(pRoot->p_right, temp->key);
+            Remove(pRoot->p_right, minNode->key);
         }
     }
+
+    // Cập nhật chiều cao
+    updateHeight(pRoot);
     // Cân bằng cây
     Balance(pRoot);
 }
