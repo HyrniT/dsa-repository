@@ -18,7 +18,7 @@ NODE *createNode(int data)
     new_node->key = data;
     new_node->p_left = nullptr;
     new_node->p_right = nullptr;
-    new_node->height = 0;
+    new_node->height = 1;
     return new_node;
 }
 
