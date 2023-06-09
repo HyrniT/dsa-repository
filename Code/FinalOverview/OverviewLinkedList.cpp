@@ -74,12 +74,6 @@ Node* delHead(Node* head)
 {
     if (head == nullptr)
         return nullptr;
-    else if (head->next == nullptr)
-    {
-        delete head;
-        head = nullptr;
-        return nullptr;
-    }
     else
     {
         Node* currNode = head;
