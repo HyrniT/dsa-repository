@@ -21,12 +21,9 @@ Node* addHead(Node* head, int key)
     Node* newNode = createNode(key);
     if (head == nullptr)
         return newNode;
-    else
-    {
-        newNode->next = head;
-        head = newNode;
-        return head;
-    }
+    newNode->next = head;
+    head = newNode;
+    return head;
 }
 
 Node* addTail(Node* head, int key)
@@ -34,14 +31,11 @@ Node* addTail(Node* head, int key)
     Node* newNode = createNode(key);
     if (head == nullptr)
         return newNode;
-    else
-    {
-        Node* currNode = head;
-        while (currNode->next != nullptr)
-            currNode = currNode->next;
-        currNode->next = newNode;
-        return head;
-    }
+    Node* currNode = head;
+    while (currNode->next != nullptr)
+        currNode = currNode->next;
+    currNode->next = newNode;
+    return head;
 }
 
 Node* addAt(Node* head, int key, int pos)
@@ -74,40 +68,34 @@ Node* delHead(Node* head)
 {
     if (head == nullptr)
         return nullptr;
-    else
-    {
-        Node* currNode = head;
-        head = head->next;
-        delete currNode;
-        currNode = nullptr;
-        return head;
-    }
+    Node* currNode = head;
+    head = head->next;
+    delete currNode;
+    currNode = nullptr;
+    return head;
 }
 
 Node* delTail(Node* head)
 {
     if (head == nullptr)
         return nullptr;
-    else if (head->next == nullptr)
+    if (head->next == nullptr)
     {
         delete head;
         head = nullptr;
         return nullptr;
     }
-    else
+    Node* prevNode = nullptr;
+    Node* currNode = head;
+    while (currNode->next != nullptr)
     {
-        Node* prevNode = nullptr;
-        Node* currNode = head;
-        while (currNode->next != nullptr)
-        {
-            prevNode = currNode;
-            currNode = currNode->next;
-        }
-        prevNode->next = nullptr;
-        delete currNode;
-        currNode = nullptr;
-        return head;
+        prevNode = currNode;
+        currNode = currNode->next;
     }
+    prevNode->next = nullptr;
+    delete currNode;
+    currNode = nullptr;
+    return head;
 }
 
 Node* delAt(Node* head, int pos)
@@ -138,7 +126,32 @@ Node* delAt(Node* head, int pos)
     return head;
 }
 
-void delAll(Node* &head)
+Node* delKey(Node* head, int key)
+{
+    if (head == nullptr)
+        return nullptr;
+    if (head->key == key)
+        return delHead(head);
+    Node* prevNode = nullptr;
+    Node* currNode = head;
+    while (currNode->next != nullptr)
+    {
+        if (currNode->key == key)
+        {
+            prevNode->next = currNode->next;
+            delete currNode;
+            currNode = prevNode->next;
+        }
+        else
+        {
+            prevNode = currNode;
+            currNode = currNode->next;
+        }
+    }
+    return head;
+}
+
+void delAll(Node*& head)
 {
     while (head != nullptr)
     {
@@ -163,6 +176,7 @@ int find(Node* head, int key)
     }
     if (currNode == nullptr)
         return -1;
+    return count;
 }
 
 Node* reverse(Node* head)
