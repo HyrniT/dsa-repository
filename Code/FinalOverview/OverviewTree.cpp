@@ -32,7 +32,7 @@
 // {
 // 	if (node == nullptr)
 // 		return;
-// 	node->height = max(getHeight(node->left), getHeight(node->right));
+// 	node->height = max(getHeight(node->left), getHeight(node->right)) + 1;
 // }
 
 // int getBalance(Node* node)
