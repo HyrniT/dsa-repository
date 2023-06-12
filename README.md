@@ -1,6 +1,6 @@
-# DSA Repository
+# DSA Repository 😎
 
-## This project includes:
+## This project includes 💁‍♂️:
 
 ### Data structures
 
@@ -12,7 +12,7 @@
 
 ### Algorithms
 
-1. 12 sort algorithms
+12 sort algorithms
   * Selection Sort
   * Insertion Sort
   * Binary Insertion Sort
@@ -26,7 +26,7 @@
   * Radix Sort
   * Flash Sort
 
-2. 4 graph algorithms
+4 graph algorithms
   * BFS
   * DFS
   * Dijkstra
