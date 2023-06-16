@@ -68,13 +68,13 @@
 
 // void rotateLeftRight(Node*& node)
 // {
-// 	rotateLeft(node->right);
+// 	rotateLeft(node->left);
 // 	rotateRight(node);
 // }
 
 // void rotateRightLeft(Node*& node)
 // {
-// 	rotateRight(node->left);
+// 	rotateRight(node->right);
 // 	rotateLeft(node);
 // }
 
