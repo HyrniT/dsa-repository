@@ -176,7 +176,7 @@ int find(Node *head, int key)
     return count;
 }
 
-Node *reverse(Node *head)
+Node *reverse(Node *head) // Recursion
 {
     if (head == nullptr || head->next == nullptr)
         return head;
@@ -185,6 +185,59 @@ Node *reverse(Node *head)
     head->next = nullptr;
     return p;
 }
+
+// Node* reverse(Node* head) // Non-recursion
+// {
+//     Node* prev = nullptr;
+//     Node* current = head;
+//     Node* next = nullptr;
+
+//     while (current != nullptr)
+//     {
+//         next = current->next;
+//         current->next = prev;
+//         prev = current;
+//         current = next;
+//     }
+
+//     return prev;
+// }
+
+// void reverse(Node* &head) // void recursion
+// {
+//     if (head == nullptr || head->next == nullptr)
+//         return;
+
+//     Node* first = head;
+//     Node* rest = head->next;
+
+//     reverse(rest);
+
+//     first->next->next = first;
+//     first->next = nullptr;
+
+//     head = rest;
+// }
+
+// void reverse(Node* &head) // void non-recursion
+// {
+//     if (head == nullptr || head->next == nullptr)
+//         return;
+
+//     Node* prev = nullptr;
+//     Node* current = head;
+//     Node* next = nullptr;
+
+//     while (current != nullptr)
+//     {
+//         next = current->next;
+//         current->next = prev;
+//         prev = current;
+//         current = next;
+//     }
+
+//     head = prev;
+// }
 
 Node *merge(Node *head1, Node *head2)
 {
