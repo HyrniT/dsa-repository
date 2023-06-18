@@ -208,15 +208,11 @@ Node *reverse(Node *head) // Recursion
 //     if (head == nullptr || head->next == nullptr)
 //         return;
 
-//     Node* first = head;
-//     Node* rest = head->next;
-
-//     reverse(rest);
-
-//     first->next->next = first;
-//     first->next = nullptr;
-
-//     head = rest;
+//     Node* p = head->next;
+//     reverse(p);
+//     head->next->next = head;
+//     head->next = nullptr;
+//     head = p;
 // }
 
 // void reverse(Node* &head) // void non-recursion
