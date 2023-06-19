@@ -1,8 +1,8 @@
-# DSA Repository 😎
+# 😎 DSA Repository 
 
-## This project includes 💁‍♂️:
+## 💁‍♂️ This project includes:
 
-### Data structures
+### 🔠 Data structures
 
 1. Singly Linked List
 2. Doubly Linked List
@@ -10,7 +10,7 @@
 4. Queue
 5. Hashing
 
-### Algorithms
+### 🧮 Algorithms
 
 12 sort algorithms
   * Selection Sort
